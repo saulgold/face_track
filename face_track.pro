@@ -11,6 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = face_track
 TEMPLATE = app
 
+#QMAKE_LFLAGS +=/STACK:64000000
 
 SOURCES += main.cpp\
         mainwindow.cpp

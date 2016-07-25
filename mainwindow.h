@@ -14,17 +14,18 @@
 #include<iostream>
 #include<vector>
 #include<algorithm>
-#include"vidcap.h"
+//#include"vidcap.h"
 #include "opencv2/opencv.hpp"
 #include <vector>
 #include <stdio.h>
 #include<stdlib.h>
-
+ #include "opencv2/objdetect/objdetect.hpp"
 #include "opencv2/opencv.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include <iostream>
 
 #include <opencv2/imgproc/imgproc_c.h>
+#include "opencv2/imgproc.hpp"
 #include <opencv2/features2d/features2d.hpp>
 #include "ml.h"
 #include <vector>
@@ -51,11 +52,14 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    cv::VideoCapture m_cap;
+
     cv::Mat m_frame_col;
     QTimer *timer;
     QImage qframe;
 
+
+    /** Function Headers */
+    void detectAndDisplay( cv::Mat inframe );
     QImage convertOpenCVMatToQtQImage(cv::Mat mat);
 };
 
