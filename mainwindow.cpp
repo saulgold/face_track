@@ -43,25 +43,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::updateGUI(){
 
-    //capture frame from default webcam
-
-   // m_cap>>m_frame_col;
 
     detector>>frame;
     cv::rectangle(frame, detector.face(), cv::Scalar(255, 0, 0));
     cv::circle(frame, detector.facePosition(), 30, cv::Scalar(0, 255, 0));
+    qframe = convertOpenCVMatToQtQImage(frame);
+    QPixmap pix = QPixmap::fromImage(qframe);
+    ui->webcam_label->setPixmap(pix);
 
-  //  flip(m_frame_col,m_frame_col,1);
-   // cv::resize(m_frame_col,m_frame_col,cv::Size(),0.5,0.5);
-  //  if(!m_frame_col.empty()){
-        //-- 1. Load the cascades
-
-       // detectAndDisplay(m_frame_col);
-        qframe = convertOpenCVMatToQtQImage(frame);
-        QPixmap pix = QPixmap::fromImage(qframe);
-        ui->webcam_label->setPixmap(pix);
-  //  }
-//    else(qDebug()<<"frame empty");
 
 
 }
