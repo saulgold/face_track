@@ -34,7 +34,7 @@
 #include <fstream>
 #include <opencv2/video/background_segm.hpp>
 #include <QTime>
-
+#include <QFileDialog>
 
 namespace Ui {
 class MainWindow;
@@ -50,13 +50,16 @@ public:
 private slots:
     void updateGUI();
 
+    void on_selectFileButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 
-    cv::Mat m_frame_col;
+    cv::Mat m_frame_col,frame;
     QTimer *timer;
     QImage qframe;
-
+    QString m_filename;
+    //cv::VideoCapture m_cap;
 
     /** Function Headers */
     void detectAndDisplay( cv::Mat inframe );

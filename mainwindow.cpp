@@ -7,6 +7,7 @@
 #include "opencv2/features2d/features2d.hpp"
 #include "opencv2/nonfree/features2d.hpp"
 #include "opencv2/highgui/highgui.hpp"
+#include "VideoFaceDetector.h"
 
 using namespace cv;
 /** Global variables */
@@ -16,7 +17,8 @@ VideoCapture cap;
 
 cv::CascadeClassifier face_cascade;
 cv::CascadeClassifier eyes_cascade;
-VideoCapture m_cap;
+VideoCapture m_cap(0);
+VideoFaceDetector detector(face_cascade_name,m_cap);
 
 
 std::string window_name = "Capture - Face detection";
@@ -42,17 +44,24 @@ MainWindow::MainWindow(QWidget *parent) :
 void MainWindow::updateGUI(){
 
     //capture frame from default webcam
-    m_cap>>m_frame_col;
 
-    if(!m_frame_col.empty()){
+   // m_cap>>m_frame_col;
+
+    detector>>frame;
+    cv::rectangle(frame, detector.face(), cv::Scalar(255, 0, 0));
+    cv::circle(frame, detector.facePosition(), 30, cv::Scalar(0, 255, 0));
+
+  //  flip(m_frame_col,m_frame_col,1);
+   // cv::resize(m_frame_col,m_frame_col,cv::Size(),0.5,0.5);
+  //  if(!m_frame_col.empty()){
         //-- 1. Load the cascades
 
-        detectAndDisplay(m_frame_col);
-        qframe = convertOpenCVMatToQtQImage(m_frame_col);
+       // detectAndDisplay(m_frame_col);
+        qframe = convertOpenCVMatToQtQImage(frame);
         QPixmap pix = QPixmap::fromImage(qframe);
         ui->webcam_label->setPixmap(pix);
-    }
-    else(qDebug()<<"frame empty");
+  //  }
+//    else(qDebug()<<"frame empty");
 
 
 }
@@ -72,7 +81,7 @@ void MainWindow::detectAndDisplay( cv::Mat frame )
 
   //-- Detect faces
 
-  face_cascade.detectMultiScale( frame_gray, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, cv::Size(30, 30) );
+  face_cascade.detectMultiScale( frame_gray, faces, 1.2, 3, 0|CV_HAAR_SCALE_IMAGE, cv::Size(30, 30) );
 
   for( size_t i = 0; i < faces.size(); i++ )
   {
@@ -83,7 +92,7 @@ void MainWindow::detectAndDisplay( cv::Mat frame )
     std::vector<cv::Rect> eyes;
 
 //    -- In each face, detect eyes
-    eyes_cascade.detectMultiScale( faceROI, eyes, 1.1, 2, 0 |CV_HAAR_SCALE_IMAGE, cv::Size(30, 30) );
+    eyes_cascade.detectMultiScale( faceROI, eyes, 1.3, 3, 0 |CV_HAAR_SCALE_IMAGE, cv::Size(10,10),cv::Size(90, 90) );
 
     for( size_t j = 0; j < eyes.size(); j++ )
      {
@@ -104,4 +113,12 @@ QImage MainWindow::convertOpenCVMatToQtQImage(cv::Mat mat) {
          qDebug() << "in convertOpenCVMatToQtQImage, image was not 1 channel or 3 channel, should never get here";
     }
     return QImage();        // return a blank QImage if the above did not work
+}
+
+void MainWindow::on_selectFileButton_clicked()
+{
+    m_filename = QFileDialog::getOpenFileName(this,
+        tr("Open Image"), "C:/Users/saul/Documents/MSc_Thesis/hci-tagging-database_download_2016-07-22_11-16-38/Sessions/", tr("video Files (*.mpg *.avi)"));
+    m_cap = cv::VideoCapture(m_filename.toStdString());
+
 }

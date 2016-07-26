@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>777</width>
-    <height>543</height>
+    <width>843</width>
+    <height>532</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,13 +27,26 @@
      <string>TextLabel</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="selectFileButton">
+    <property name="geometry">
+     <rect>
+      <x>720</x>
+      <y>10</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>select file</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>777</width>
+     <width>843</width>
      <height>21</height>
     </rect>
    </property>

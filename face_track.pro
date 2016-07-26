@@ -14,9 +14,11 @@ TEMPLATE = app
 #QMAKE_LFLAGS +=/STACK:64000000
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    VideoFaceDetector.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    VideoFaceDetector.h
 
 FORMS    += mainwindow.ui
 
