@@ -35,6 +35,7 @@
 #include <opencv2/video/background_segm.hpp>
 #include <QTime>
 #include <QFileDialog>
+#include <recursive_ica.h>
 
 namespace Ui {
 class MainWindow;
@@ -63,7 +64,13 @@ private:
 
     /** Function Headers */
     void detectAndDisplay( cv::Mat inframe );
-    QImage convertOpenCVMatToQtQImage(cv::Mat mat);
+    QPixmap convertOpenCVMatToQtQPixmap(cv::Mat mat);
+    //to deal with the ROI
+    QPixmap convertOpenCVMatToQtQPixmap2(cv::Mat mat);
+    cv::Mat m_skinFrame;
+    void printMatrix(cv::Mat mat);
+    void recursiveICA2(cv::Mat datargb, cv::Mat & weights);
+
 };
 
 #endif // MAINWINDOW_H

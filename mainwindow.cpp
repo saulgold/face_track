@@ -19,7 +19,7 @@ cv::CascadeClassifier face_cascade;
 cv::CascadeClassifier eyes_cascade;
 VideoCapture m_cap(0);
 VideoFaceDetector detector(face_cascade_name,m_cap);
-
+RecursiveICA *ica=new RecursiveICA(0.995);
 
 std::string window_name = "Capture - Face detection";
 cv::RNG rng(12345);
@@ -45,11 +45,45 @@ void MainWindow::updateGUI(){
 
 
     detector>>frame;
+
     cv::rectangle(frame, detector.face(), cv::Scalar(255, 0, 0));
     cv::circle(frame, detector.facePosition(), 30, cv::Scalar(0, 255, 0));
-    qframe = convertOpenCVMatToQtQImage(frame);
-    QPixmap pix = QPixmap::fromImage(qframe);
-    ui->webcam_label->setPixmap(pix);
+
+    if(detector.face().area()!=0){
+        cv::Rect middleFaceRect = Rect(detector.facePosition().x-10,detector.facePosition().y-10,20,20);
+        m_skinFrame = cv::Mat(frame,middleFaceRect);
+        cv::rectangle(frame,middleFaceRect,cv::Scalar(0,0,255),1,8,0);
+
+
+
+    }
+    //cv::Mat faceFrame = cv::Mat(frame,detector.face());
+   // cv::cvtColor(faceFrame,faceFrame,CV_BGR2RGB);
+    //m_skinFrame.convertTo(m_skinFrame,CV_64F);
+    cv::Mat tframe;
+
+    tframe=Mat::ones(3,3,CV_64F)*100;
+    cv::Mat icaWeights;
+    //icaWeights.create(m_skinFrame.cols, m_skinFrame.rows, CV_64F);
+  // m_skinFrame.convertTo(m_skinFrame,CV_64FC1);
+
+
+    //recursiveICA2(m_skinFrame,icaWeights);
+
+
+    if(!m_skinFrame.empty()){
+        cv::randu(icaWeights,Scalar(-1,-1,-1),Scalar(1,1,1));
+        cv::cvtColor(m_skinFrame,m_skinFrame,CV_BGR2GRAY);
+        //m_skinFrame.convertTo(m_skinFrame,CV_64F);
+        ica->recursiveICA(m_skinFrame,icaWeights);
+
+    //printMatrix(m_skinFrame.col(0));
+    //printMatrix(icaWeights);
+    //cv::Mat y = icaWeights * m_skinFrame.col(0);
+}
+
+    ui->webcam_label->setPixmap(convertOpenCVMatToQtQPixmap(frame));
+    ui->skinLabel->setPixmap(convertOpenCVMatToQtQPixmap2(m_skinFrame));
 
 
 
@@ -59,49 +93,35 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-/** @function detectAndDisplay */
-void MainWindow::detectAndDisplay( cv::Mat frame )
-{
-  std::vector<cv::Rect> faces;
-  cv::Mat frame_gray;
 
-  cv::cvtColor( frame, frame_gray, CV_BGR2GRAY );
-  cv::equalizeHist( frame_gray, frame_gray );
 
-  //-- Detect faces
-
-  face_cascade.detectMultiScale( frame_gray, faces, 1.2, 3, 0|CV_HAAR_SCALE_IMAGE, cv::Size(30, 30) );
-
-  for( size_t i = 0; i < faces.size(); i++ )
-  {
-    cv::Point center( faces[i].x + faces[i].width*0.5, faces[i].y + faces[i].height*0.5 );
-    cv::ellipse( frame, center, cv::Size( faces[i].width*0.5, faces[i].height*0.5), 0, 0, 360, cv::Scalar( 255, 0, 255 ), 4, 8, 0 );
-
-    cv::Mat faceROI = frame_gray( faces[i] );
-    std::vector<cv::Rect> eyes;
-
-//    -- In each face, detect eyes
-    eyes_cascade.detectMultiScale( faceROI, eyes, 1.3, 3, 0 |CV_HAAR_SCALE_IMAGE, cv::Size(10,10),cv::Size(90, 90) );
-
-    for( size_t j = 0; j < eyes.size(); j++ )
-     {
-       cv::Point center( faces[i].x + eyes[j].x + eyes[j].width*0.5, faces[i].y + eyes[j].y + eyes[j].height*0.5 );
-       int radius = cvRound( (eyes[j].width + eyes[j].height)*0.25 );
-       cv::circle( frame, center, radius, cv::Scalar( 255, 0, 0 ), 4, 8, 0 );
-     }
-  }
-
-}
-
-QImage MainWindow::convertOpenCVMatToQtQImage(cv::Mat mat) {
+QPixmap MainWindow::convertOpenCVMatToQtQPixmap(cv::Mat mat) {
     if(mat.channels() == 1) {                   // if grayscale image
-        return QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_Indexed8);     // declare and return a QImage
+        //cv::flip(mat,mat,1);
+        QImage qFrame =  QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_Indexed8);     // declare and return a QImage
+        return QPixmap::fromImage(qFrame);
     } else if(mat.channels() == 3) {            // if 3 channel color image
+        //cv::flip(mat,mat,1);
         cv::cvtColor(mat, mat, CV_BGR2RGB);     // invert BGR to RGB
-        return QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);       // declare and return a QImage
-         qDebug() << "in convertOpenCVMatToQtQImage, image was not 1 channel or 3 channel, should never get here";
+        QImage qFrame = QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);       // declare and return a QImage
+        return QPixmap::fromImage(qFrame);
+        qDebug() << "in convertOpenCVMatToQtQImage, image was not 1 channel or 3 channel, should never get here";
     }
-    return QImage();        // return a blank QImage if the above did not work
+    return QPixmap();        // return a blank QImage if the above did not work
+}
+QPixmap MainWindow::convertOpenCVMatToQtQPixmap2(cv::Mat mat) {
+    if(mat.channels() == 1) {                   // if grayscale image
+        //cv::flip(mat,mat,1);
+        QImage qFrame =  QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_Indexed8);     // declare and return a QImage
+        return QPixmap::fromImage(qFrame);
+    } else if(mat.channels() == 3) {            // if 3 channel color image
+        //cv::flip(mat,mat,1);
+       // cv::cvtColor(mat, mat, CV_BGR2RGB);     // invert BGR to RGB
+        QImage qFrame = QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);       // declare and return a QImage
+        return QPixmap::fromImage(qFrame);
+        qDebug() << "in convertOpenCVMatToQtQImage, image was not 1 channel or 3 channel, should never get here";
+    }
+    return QPixmap();        // return a blank QImage if the above did not work
 }
 
 void MainWindow::on_selectFileButton_clicked()
@@ -110,4 +130,61 @@ void MainWindow::on_selectFileButton_clicked()
         tr("Open Image"), "C:/Users/saul/Documents/MSc_Thesis/hci-tagging-database_download_2016-07-22_11-16-38/Sessions/", tr("video Files (*.mpg *.avi)"));
     m_cap = cv::VideoCapture(m_filename.toStdString());
 
+}
+void MainWindow::printMatrix(cv::Mat mat){
+    QString line;
+    for(int i=0; i<mat.cols;++i){
+        for(int j=0;j<mat.rows;++j){
+
+            line.append( QString::number(mat.at<Vec3b>(j,i)[0]));
+           line.append(QString(","));
+           line.append( QString::number (mat.at<Vec3b>(j,i)[1]));
+          line.append(QString(","));
+          line.append( QString::number (mat.at<Vec3b>(j,i)[2]));
+         line.append(QString("    "));
+
+        }
+        qDebug()<< line;
+        line.clear();
+    }
+}
+
+void MainWindow::recursiveICA2(cv::Mat datargb, cv::Mat & weights)
+{
+
+ // getDataRows(datargb, dataRows);
+  //getDataCols(datargb, dataCols);
+  int lmdinit = 0.99;
+  int dataRows = datargb.rows;
+  int dataCols = datargb.cols;
+  weights.create(dataRows, dataRows, CV_64F);
+  cv::randu(weights, Scalar(-1), Scalar(1));
+
+  cv::cvtColor(weights,weights,CV_GRAY2RGB);
+  int iterate_num=0;
+  datargb.convertTo(datargb,CV_64F);
+
+  for (int i=0;i<dataCols;i++)
+    {
+  iterate_num++;
+  cv::transpose(weights,weights);
+
+  cv::Mat y = weights*datargb.col(i);
+
+
+  cv::Mat tanh1, tanh2;
+  exp(y,tanh1);
+  exp(-1*y,tanh2);
+  cv::Mat nonlin=(tanh1-tanh2)/(tanh1+tanh2);
+
+  cv::Mat gn=weights.t() * nonlin;
+  double lmd=lmdinit/pow((double)iterate_num, 0.7);
+  weights=weights+(lmd/(1-lmd))*(weights-((y*gn.t())/(1+lmd*(nonlin.t()*y-1))));
+
+  y.release();
+  tanh1.release();
+  tanh2.release();
+  nonlin.release();
+  gn.release();
+    }
 }

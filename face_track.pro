@@ -18,7 +18,9 @@ SOURCES += main.cpp\
     VideoFaceDetector.cpp
 
 HEADERS  += mainwindow.h \
-    VideoFaceDetector.h
+    VideoFaceDetector.h \
+    recursive_ica.h \
+    sys_lib.h
 
 FORMS    += mainwindow.ui
 
@@ -36,6 +38,9 @@ LIBS += -LC:\opencv2413\build\x86\vc12\lib \
     -lopencv_core2413d \
     -lopencv_features2d2413d \
     -lopencv_flann2413d \
+    -lopencv_ml2413d \
+    -lopencv_imgproc2413d \
+    -lopencv_contrib2413d \
     -lopencv_highgui2413d
 } else {
 LIBS += -LC:\opencv2413\build\x86\vc12\lib \
@@ -47,6 +52,9 @@ LIBS += -LC:\opencv2413\build\x86\vc12\lib \
     -lopencv_core2413 \
     -lopencv_features2d2413 \
     -lopencv_flann2413 \
+    -lopencv_ml2413 \
+    -lopencv_imgproc2413 \
+    -lopencv_contrib2413 \
     -lopencv_highgui2413
 }
 

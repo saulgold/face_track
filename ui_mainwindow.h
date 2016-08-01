@@ -30,6 +30,7 @@ public:
     QWidget *centralWidget;
     QLabel *webcam_label;
     QPushButton *selectFileButton;
+    QLabel *skinLabel;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -38,7 +39,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(843, 532);
+        MainWindow->resize(979, 532);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         webcam_label = new QLabel(centralWidget);
@@ -47,10 +48,13 @@ public:
         selectFileButton = new QPushButton(centralWidget);
         selectFileButton->setObjectName(QStringLiteral("selectFileButton"));
         selectFileButton->setGeometry(QRect(720, 10, 75, 23));
+        skinLabel = new QLabel(centralWidget);
+        skinLabel->setObjectName(QStringLiteral("skinLabel"));
+        skinLabel->setGeometry(QRect(700, 130, 211, 191));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 843, 21));
+        menuBar->setGeometry(QRect(0, 0, 979, 21));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -69,6 +73,7 @@ public:
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
         webcam_label->setText(QApplication::translate("MainWindow", "TextLabel", 0));
         selectFileButton->setText(QApplication::translate("MainWindow", "select file", 0));
+        skinLabel->setText(QApplication::translate("MainWindow", "TextLabel", 0));
     } // retranslateUi
 
 };
