@@ -48,10 +48,7 @@ void MainWindow::updateGUI(){
     cv::circle(frame, detector.facePosition(), 30, cv::Scalar(0, 255, 0));
 
     if(detector.face().area()!=0){
-        detector.getROI(frame,m_skinFrame);
-//        cv::Rect middleFaceRect = Rect(detector.facePosition().x-10,detector.facePosition().y-10,20,20);
-//        m_skinFrame = cv::Mat(frame,middleFaceRect);
-//        cv::rectangle(frame,middleFaceRect,cv::Scalar(0,0,255),1,8,0);
+       m_skinFrame = detector.ROIframe(frame);
     }
     cv::Mat icaWeights;
 

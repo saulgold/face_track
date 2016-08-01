@@ -280,11 +280,13 @@ cv::Point VideoFaceDetector::operator>>(cv::Mat &frame)
     return this->getFrameAndDetect(frame);
 }
 
-void VideoFaceDetector::getROI(cv::Mat frame,cv::Mat &roi)
+cv::Mat VideoFaceDetector::ROIframe(cv::Mat frame)
 {
 
     cv::Rect middleFaceRect = cv::Rect(this->facePosition().x-10,this->facePosition().y-10,20,20);
-    roi = cv::Mat(frame,middleFaceRect);
+    m_ROI = cv::Mat(frame,middleFaceRect);
     cv::rectangle(frame,middleFaceRect,cv::Scalar(0,0,255),1,8,0);
+
+    return m_ROI;
 
 }

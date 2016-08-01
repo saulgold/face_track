@@ -22,7 +22,7 @@ public:
     cv::Point               facePosition() const;
     void                    setTemplateMatchingMaxDuration(const double s);
     double                  templateMatchingMaxDuration() const;
-        void getROI(cv::Mat frame, cv::Mat &roi);
+    cv::Mat                 ROIframe(cv::Mat frame);
 private:
     static const double     TICK_FREQUENCY;
 
@@ -41,6 +41,7 @@ private:
     int                     m_resizedWidth = 320;
     cv::Point               m_facePosition;
     double                  m_templateMatchingMaxDuration = 3;
+    cv::Mat                 m_ROI;
 
     cv::Rect    doubleRectSize(const cv::Rect &inputRect, const cv::Rect &frameSize) const;
     cv::Rect    biggestFace(std::vector<cv::Rect> &faces) const;
