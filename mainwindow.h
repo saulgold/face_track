@@ -68,8 +68,9 @@ private:
     //to deal with the ROI
     QPixmap convertOpenCVMatToQtQPixmap2(cv::Mat mat);
     cv::Mat m_skinFrame;
-    void printMatrix(cv::Mat mat);
-    void recursiveICA2(cv::Mat datargb, cv::Mat & weights);
+
+    /*ICA object declaration*/
+    RecursiveICA *ica=new RecursiveICA(0.995);
 
 };
 

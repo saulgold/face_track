@@ -11,15 +11,13 @@
 
 using namespace cv;
 /** Global variables */
+VideoCapture m_cap(0);
 cv::String face_cascade_name = "haarcascade_frontalface_alt2.xml";
 cv::String eyes_cascade_name = "haarcascade_eye.xml";
-VideoCapture cap;
-
 cv::CascadeClassifier face_cascade;
 cv::CascadeClassifier eyes_cascade;
-VideoCapture m_cap(0);
 VideoFaceDetector detector(face_cascade_name,m_cap);
-RecursiveICA *ica=new RecursiveICA(0.995);
+
 
 std::string window_name = "Capture - Face detection";
 cv::RNG rng(12345);
@@ -50,36 +48,20 @@ void MainWindow::updateGUI(){
     cv::circle(frame, detector.facePosition(), 30, cv::Scalar(0, 255, 0));
 
     if(detector.face().area()!=0){
-        cv::Rect middleFaceRect = Rect(detector.facePosition().x-10,detector.facePosition().y-10,20,20);
-        m_skinFrame = cv::Mat(frame,middleFaceRect);
-        cv::rectangle(frame,middleFaceRect,cv::Scalar(0,0,255),1,8,0);
-
-
-
+        detector.getROI(frame,m_skinFrame);
+//        cv::Rect middleFaceRect = Rect(detector.facePosition().x-10,detector.facePosition().y-10,20,20);
+//        m_skinFrame = cv::Mat(frame,middleFaceRect);
+//        cv::rectangle(frame,middleFaceRect,cv::Scalar(0,0,255),1,8,0);
     }
-    //cv::Mat faceFrame = cv::Mat(frame,detector.face());
-   // cv::cvtColor(faceFrame,faceFrame,CV_BGR2RGB);
-    //m_skinFrame.convertTo(m_skinFrame,CV_64F);
-    cv::Mat tframe;
-
-    tframe=Mat::ones(3,3,CV_64F)*100;
     cv::Mat icaWeights;
-    //icaWeights.create(m_skinFrame.cols, m_skinFrame.rows, CV_64F);
-  // m_skinFrame.convertTo(m_skinFrame,CV_64FC1);
 
-
-    //recursiveICA2(m_skinFrame,icaWeights);
 
 
     if(!m_skinFrame.empty()){
         cv::randu(icaWeights,Scalar(-1,-1,-1),Scalar(1,1,1));
         cv::cvtColor(m_skinFrame,m_skinFrame,CV_BGR2GRAY);
-        //m_skinFrame.convertTo(m_skinFrame,CV_64F);
-        ica->recursiveICA(m_skinFrame,icaWeights);
-
-    //printMatrix(m_skinFrame.col(0));
-    //printMatrix(icaWeights);
-    //cv::Mat y = icaWeights * m_skinFrame.col(0);
+        m_skinFrame.convertTo(m_skinFrame,CV_64F);
+        //ica->recursiveICA(m_skinFrame,icaWeights);
 }
 
     ui->webcam_label->setPixmap(convertOpenCVMatToQtQPixmap(frame));
@@ -131,60 +113,5 @@ void MainWindow::on_selectFileButton_clicked()
     m_cap = cv::VideoCapture(m_filename.toStdString());
 
 }
-void MainWindow::printMatrix(cv::Mat mat){
-    QString line;
-    for(int i=0; i<mat.cols;++i){
-        for(int j=0;j<mat.rows;++j){
-
-            line.append( QString::number(mat.at<Vec3b>(j,i)[0]));
-           line.append(QString(","));
-           line.append( QString::number (mat.at<Vec3b>(j,i)[1]));
-          line.append(QString(","));
-          line.append( QString::number (mat.at<Vec3b>(j,i)[2]));
-         line.append(QString("    "));
-
-        }
-        qDebug()<< line;
-        line.clear();
-    }
-}
-
-void MainWindow::recursiveICA2(cv::Mat datargb, cv::Mat & weights)
-{
-
- // getDataRows(datargb, dataRows);
-  //getDataCols(datargb, dataCols);
-  int lmdinit = 0.99;
-  int dataRows = datargb.rows;
-  int dataCols = datargb.cols;
-  weights.create(dataRows, dataRows, CV_64F);
-  cv::randu(weights, Scalar(-1), Scalar(1));
-
-  cv::cvtColor(weights,weights,CV_GRAY2RGB);
-  int iterate_num=0;
-  datargb.convertTo(datargb,CV_64F);
-
-  for (int i=0;i<dataCols;i++)
-    {
-  iterate_num++;
-  cv::transpose(weights,weights);
-
-  cv::Mat y = weights*datargb.col(i);
 
 
-  cv::Mat tanh1, tanh2;
-  exp(y,tanh1);
-  exp(-1*y,tanh2);
-  cv::Mat nonlin=(tanh1-tanh2)/(tanh1+tanh2);
-
-  cv::Mat gn=weights.t() * nonlin;
-  double lmd=lmdinit/pow((double)iterate_num, 0.7);
-  weights=weights+(lmd/(1-lmd))*(weights-((y*gn.t())/(1+lmd*(nonlin.t()*y-1))));
-
-  y.release();
-  tanh1.release();
-  tanh2.release();
-  nonlin.release();
-  gn.release();
-    }
-}

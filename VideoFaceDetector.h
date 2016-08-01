@@ -22,7 +22,7 @@ public:
     cv::Point               facePosition() const;
     void                    setTemplateMatchingMaxDuration(const double s);
     double                  templateMatchingMaxDuration() const;
-
+        void getROI(cv::Mat frame, cv::Mat &roi);
 private:
     static const double     TICK_FREQUENCY;
 
@@ -49,4 +49,5 @@ private:
     void        detectFaceAllSizes(const cv::Mat &frame);
     void        detectFaceAroundRoi(const cv::Mat &frame);
     void        detectFacesTemplateMatching(const cv::Mat &frame);
+
 };
