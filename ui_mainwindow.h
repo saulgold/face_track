@@ -55,7 +55,7 @@ public:
         skinLabel->setGeometry(QRect(700, 130, 81, 71));
         chart1 = new QCustomPlot(centralWidget);
         chart1->setObjectName(QStringLiteral("chart1"));
-        chart1->setGeometry(QRect(60, 160, 451, 191));
+        chart1->setGeometry(QRect(0, 250, 691, 191));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));

@@ -61,7 +61,7 @@ private:
     QImage qframe;
     QString m_filename;
     QVector<double> m_frame_iteration;
-    QVector<double> m_greenVals;
+    QVector<double> m_green_vals, m_red_vals, m_blue_vals;
     double m_iteration =0;
     cv::Scalar m_blue_average,m_green_average,m_red_average;
     int m_xrange1,m_xrange2, m_yrange1, m_yrange2;

@@ -56,9 +56,9 @@
    <widget class="QCustomPlot" name="chart1" native="true">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>160</y>
-      <width>451</width>
+      <x>0</x>
+      <y>250</y>
+      <width>691</width>
       <height>191</height>
      </rect>
     </property>
