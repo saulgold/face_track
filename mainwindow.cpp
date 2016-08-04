@@ -56,10 +56,7 @@ void MainWindow::updateGUI(){
     cv::Mat icaWeights;
 
 cv::Mat blue, green, red;
-cv::Scalar blue_average,green_average,red_average;
     if(!m_skinFrame.empty()){
-        cv::randu(icaWeights,Scalar(-1,-1,-1),Scalar(1,1,1));
-
 
         blue = m_skinFrame - cv::Scalar(0,255,255);
         green = m_skinFrame - cv::Scalar(255,0,255);
@@ -150,8 +147,17 @@ void MainWindow::printMatrix(cv::Mat mat){
 
 void MainWindow::graphInit(void){
     ui->chart1->addGraph();
-    ui->chart1->graph(0)->setName("green");
-    ui->chart1->graph(0)->setPen(QPen(QColor(255,0,0)));
+    ui->chart1->graph(0)->setName("blue");
+    ui->chart1->graph(0)->setPen(QPen(QColor(0,0,255)));
+
+    ui->chart1->addGraph();
+    ui->chart1->graph(1)->setName("green");
+    ui->chart1->graph(1)->setPen(QPen(QColor(0,255,0)));
+
+    ui->chart1->addGraph();
+    ui->chart1->graph(2)->setName("red");
+    ui->chart1->graph(2)->setPen(QPen(QColor(255,0,0)));
+
     ui->chart1->xAxis->setLabel("frame");
     ui->chart1->yAxis->setLabel("intensity");
     ui->chart1->xAxis->setAutoTickStep(true);
@@ -169,13 +175,21 @@ void MainWindow::graphUpdate(void){
         m_xrange1 = m_iteration - 450;
         m_xrange2 = m_iteration;
     }
-    m_yrange1 = m_green_average[1] - 10;
-    m_yrange2 = m_green_average[1] + 10;
+    m_yrange1 = (m_blue_average[0] + m_green_average[1]+m_red_average[2])/3 - 100;
+    m_yrange2 = (m_blue_average[0] + m_green_average[1]+m_red_average[2])/3 + 100;
     ui->chart1->yAxis->setRange(m_yrange1,m_yrange2);
     ui->chart1->xAxis->setRange(m_xrange1,m_xrange2);
-    m_greenVals.append(m_green_average[1]);
+    ui->chart1->yAxis->setVisible(false);
+    ui->chart1->xAxis->setVisible(false);
+    m_blue_vals.append(m_blue_average[0]);
+    m_green_vals.append(m_green_average[1]);
+    m_red_vals.append(m_red_average[2]);
+
     m_frame_iteration.append(m_iteration);
     m_iteration++;
-    ui->chart1->graph(0)->setData(m_frame_iteration,m_greenVals);
+    ui->chart1->graph(0)->setData(m_frame_iteration,m_blue_vals);
+    ui->chart1->graph(1)->setData(m_frame_iteration,m_green_vals);
+    ui->chart1->graph(2)->setData(m_frame_iteration,m_red_vals);
+
     ui->chart1->replot();
 }
