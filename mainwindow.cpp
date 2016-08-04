@@ -8,6 +8,8 @@
 #include "opencv2/nonfree/features2d.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "VideoFaceDetector.h"
+#include "qcustomplot.h"
+
 
 using namespace cv;
 /** Global variables */
@@ -26,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    if(!m_cap.open(0)){
+    if(!m_cap.open(1)){
         qDebug()<<"webcam no open";
     }
     if( !face_cascade.load( face_cascade_name ) ){ qDebug()<<"can´t find face_cascade xml"; }
@@ -36,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
     timer = new QTimer(this);
     connect(timer,SIGNAL(timeout()),this,SLOT(updateGUI()));
     timer->start();
+    graphInit();
 
 }
 
@@ -52,17 +55,28 @@ void MainWindow::updateGUI(){
     }
     cv::Mat icaWeights;
 
-
-
+cv::Mat blue, green, red;
+cv::Scalar blue_average,green_average,red_average;
     if(!m_skinFrame.empty()){
         cv::randu(icaWeights,Scalar(-1,-1,-1),Scalar(1,1,1));
-        cv::cvtColor(m_skinFrame,m_skinFrame,CV_BGR2GRAY);
-        m_skinFrame.convertTo(m_skinFrame,CV_64F);
-        //ica->recursiveICA(m_skinFrame,icaWeights);
+
+
+        blue = m_skinFrame - cv::Scalar(0,255,255);
+        green = m_skinFrame - cv::Scalar(255,0,255);
+        red = m_skinFrame - cv::Scalar(255,255,0);
+
+        m_blue_average = cv::mean(blue);
+        m_green_average = cv::mean(green);
+        m_red_average = cv::mean(red);
+
+        graphUpdate();
+
+
+
 }
 
     ui->webcam_label->setPixmap(convertOpenCVMatToQtQPixmap(frame));
-    ui->skinLabel->setPixmap(convertOpenCVMatToQtQPixmap2(m_skinFrame));
+    ui->skinLabel->setPixmap(convertOpenCVMatToQtQPixmap2(green));
 
 
 
@@ -111,4 +125,57 @@ void MainWindow::on_selectFileButton_clicked()
 
 }
 
+void MainWindow::printMatrix(cv::Mat mat){
+    QString line;
+    for(int i=0; i<mat.cols;++i){
+        for(int j=0;j<mat.rows;++j){
+            if(mat.channels() ==3){
+            line.append( QString::number(mat.at<Vec3b>(j,i)[0]));
+           line.append(QString(","));
+           line.append( QString::number (mat.at<Vec3b>(j,i)[1]));
+          line.append(QString(","));
+          line.append( QString::number (mat.at<Vec3b>(j,i)[2]));
+         line.append(QString("    "));
+            }
+            else if(mat.channels() ==1){
+                line.append( QString::number(mat.at<uchar>(j,i)));
 
+            }
+            else{qDebug()<<"no channels in matrix";}
+        }
+        qDebug()<< line;
+        line.clear();
+    }
+}
+
+void MainWindow::graphInit(void){
+    ui->chart1->addGraph();
+    ui->chart1->graph(0)->setName("green");
+    ui->chart1->graph(0)->setPen(QPen(QColor(255,0,0)));
+    ui->chart1->xAxis->setLabel("frame");
+    ui->chart1->yAxis->setLabel("intensity");
+    ui->chart1->xAxis->setAutoTickStep(true);
+    ui->chart1->yAxis->setAutoTickStep(true);
+    ui->chart1->legend->setVisible(true);
+    ui->chart1->setStyleSheet("background:hsva(255,255,255,0%);");
+    ui->chart1->setBackground(QBrush(Qt::NoBrush));
+}
+
+void MainWindow::graphUpdate(void){
+    if(m_iteration<450){
+        m_xrange1 =0;
+        m_xrange2=450;
+    }else if(m_iteration>=450){
+        m_xrange1 = m_iteration - 450;
+        m_xrange2 = m_iteration;
+    }
+    m_yrange1 = m_green_average[1] - 10;
+    m_yrange2 = m_green_average[1] + 10;
+    ui->chart1->yAxis->setRange(m_yrange1,m_yrange2);
+    ui->chart1->xAxis->setRange(m_xrange1,m_xrange2);
+    m_greenVals.append(m_green_average[1]);
+    m_frame_iteration.append(m_iteration);
+    m_iteration++;
+    ui->chart1->graph(0)->setData(m_frame_iteration,m_greenVals);
+    ui->chart1->replot();
+}

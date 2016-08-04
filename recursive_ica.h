@@ -42,7 +42,6 @@ class RecursiveICA{
     cv::randu(weights, Scalar(-1), Scalar(1));
 
     int iterate_num=0;
-    //datargb.convertTo(datargb,CV_64FC1);
 
     for (int i=0;i<dataCols;i++)
       {

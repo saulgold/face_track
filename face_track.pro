@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 TARGET = face_track
 TEMPLATE = app
@@ -15,12 +15,14 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    VideoFaceDetector.cpp
+    VideoFaceDetector.cpp \
+    qcustomplot.cpp
 
 HEADERS  += mainwindow.h \
     VideoFaceDetector.h \
     recursive_ica.h \
-    sys_lib.h
+    sys_lib.h \
+    qcustomplot.h
 
 FORMS    += mainwindow.ui
 

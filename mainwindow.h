@@ -60,15 +60,23 @@ private:
     QTimer *timer;
     QImage qframe;
     QString m_filename;
+    QVector<double> m_frame_iteration;
+    QVector<double> m_greenVals;
+    double m_iteration =0;
+    cv::Scalar m_blue_average,m_green_average,m_red_average;
+    int m_xrange1,m_xrange2, m_yrange1, m_yrange2;
+
     //cv::VideoCapture m_cap;
 
     /** Function Headers */
     void detectAndDisplay( cv::Mat inframe );
     QPixmap convertOpenCVMatToQtQPixmap(cv::Mat mat);
+    void printMatrix(cv::Mat);
     //to deal with the ROI
     QPixmap convertOpenCVMatToQtQPixmap2(cv::Mat mat);
     cv::Mat m_skinFrame;
-
+    void graphInit(void);
+    void graphUpdate(void);
     /*ICA object declaration*/
     RecursiveICA *ica=new RecursiveICA(0.995);
 

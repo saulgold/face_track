@@ -22,7 +22,6 @@
 #include "opencv2/contrib/contrib.hpp"
 #include "opencv2/ml/ml.hpp"
 #include "opencv2/nonfree/features2d.hpp"
-#include "opencv2/nonfree/features2d.hpp"
 #include "opencv2/features2d/features2d.hpp"
 
 

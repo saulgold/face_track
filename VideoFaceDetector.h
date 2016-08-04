@@ -23,6 +23,7 @@ public:
     void                    setTemplateMatchingMaxDuration(const double s);
     double                  templateMatchingMaxDuration() const;
     cv::Mat                 ROIframe(cv::Mat frame);
+    void                    getBGR(cv::Mat frame,cv::Mat &blue,cv::Mat &green,cv::Mat &red);
 private:
     static const double     TICK_FREQUENCY;
 

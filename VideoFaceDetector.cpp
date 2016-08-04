@@ -290,3 +290,15 @@ cv::Mat VideoFaceDetector::ROIframe(cv::Mat frame)
     return m_ROI;
 
 }
+
+void VideoFaceDetector::getBGR(cv::Mat frame,cv::Mat &blue,cv::Mat &green,cv::Mat &red)
+{
+    blue = frame - cv::Scalar(0,255,255);
+    green = frame - cv::Scalar(255,0,255);
+    red = frame - cv::Scalar(255,255,0);
+
+    blue.convertTo(blue,CV_64F);
+    green.convertTo(green,CV_64F);
+    red.convertTo(red,CV_64F);
+
+}

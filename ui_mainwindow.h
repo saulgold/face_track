@@ -21,6 +21,7 @@
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
+#include "qcustomplot.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -31,6 +32,7 @@ public:
     QLabel *webcam_label;
     QPushButton *selectFileButton;
     QLabel *skinLabel;
+    QCustomPlot *chart1;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -50,11 +52,14 @@ public:
         selectFileButton->setGeometry(QRect(720, 10, 75, 23));
         skinLabel = new QLabel(centralWidget);
         skinLabel->setObjectName(QStringLiteral("skinLabel"));
-        skinLabel->setGeometry(QRect(700, 130, 211, 191));
+        skinLabel->setGeometry(QRect(700, 130, 81, 71));
+        chart1 = new QCustomPlot(centralWidget);
+        chart1->setObjectName(QStringLiteral("chart1"));
+        chart1->setGeometry(QRect(60, 160, 451, 191));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 979, 21));
+        menuBar->setGeometry(QRect(0, 0, 979, 20));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
