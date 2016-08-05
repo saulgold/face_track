@@ -57,6 +57,7 @@ void MainWindow::updateGUI(){
 
 cv::Mat blue, green, red;
     if(!m_skinFrame.empty()){
+        skin_roi.update();
 
         blue = m_skinFrame - cv::Scalar(0,255,255);
         green = m_skinFrame - cv::Scalar(255,0,255);
@@ -190,7 +191,7 @@ void MainWindow::graphUpdate(void){
     m_yrange2 = (m_blue_average[0] + m_green_average[1]+m_red_average[2])/3 + 100;
     ui->chart1->yAxis->setRange(m_yrange1,m_yrange2);
     ui->chart1->xAxis->setRange(m_xrange1,m_xrange2);
-    ui->chart_FFT->yaxis->setRange(0,255);
+    ui->chart_FFT->yAxis->setRange(0,255);
 
     ui->chart1->yAxis->setVisible(false);
     ui->chart1->xAxis->setVisible(false);
