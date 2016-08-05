@@ -170,11 +170,29 @@ void MainWindow::graphInit(void){
     ui->chart1->legend->setVisible(true);
     ui->chart1->setStyleSheet("background:hsva(255,255,255,0%);");
     ui->chart1->setBackground(QBrush(Qt::NoBrush));
+    ui->chart1->yAxis->setVisible(false);
+    ui->chart1->xAxis->setVisible(false);
 
+    ui->chart_FFT->xAxis->setLabel("frame");
+    ui->chart_FFT->yAxis->setLabel("intensity");
+    ui->chart_FFT->legend->setVisible(true);
     ui->chart_FFT->setStyleSheet("background:hsva(255,255,255,0%);");
     ui->chart_FFT->setBackground(QBrush(Qt::NoBrush));
+    ui->chart_FFT->yAxis->setVisible(false);
+    ui->chart_FFT->xAxis->setVisible(false);
+
     ui->chart_FFT->addGraph();
-    ui->chart_FFT->graph(0)->setName("FFT");
+    ui->chart_FFT->graph(0)->setName("blue");
+    ui->chart_FFT->graph(0)->setPen(QPen(QColor(0,0,255)));
+
+    ui->chart_FFT->addGraph();
+    ui->chart_FFT->graph(1)->setName("green");
+    ui->chart_FFT->graph(1)->setPen(QPen(QColor(0,255,0)));
+
+    ui->chart_FFT->addGraph();
+    ui->chart_FFT->graph(2)->setName("red");
+    ui->chart_FFT->graph(2)->setPen(QPen(QColor(255,0,0)));
+
 }
 
 void MainWindow::graphUpdate(void){
@@ -191,10 +209,14 @@ void MainWindow::graphUpdate(void){
     m_yrange2 = (m_blue_average[0] + m_green_average[1]+m_red_average[2])/3 + 100;
     ui->chart1->yAxis->setRange(m_yrange1,m_yrange2);
     ui->chart1->xAxis->setRange(m_xrange1,m_xrange2);
+    if(skin_roi.getIteratorVals().size()!=0){
+        int x_min = skin_roi.getIteratorVals()[0];
+        int x_max = skin_roi.getIteratorVals()[skin_roi.getIteratorVals().size()-1];
+        ui->chart_FFT->xAxis->setRange(x_min,x_max);
+    }
     ui->chart_FFT->yAxis->setRange(0,255);
 
-    ui->chart1->yAxis->setVisible(false);
-    ui->chart1->xAxis->setVisible(false);
+
 
     m_blue_vals.append(m_blue_average[0]);
     m_green_vals.append(m_green_average[1]);
@@ -205,7 +227,11 @@ void MainWindow::graphUpdate(void){
     ui->chart1->graph(0)->setData(m_frame_iteration,m_blue_vals);
     ui->chart1->graph(1)->setData(m_frame_iteration,m_green_vals);
     ui->chart1->graph(2)->setData(m_frame_iteration,m_red_vals);
+
     ui->chart_FFT->graph(0)->setData(skin_roi.getIteratorVals(),skin_roi.getBlueVals());
+    ui->chart_FFT->graph(1)->setData(skin_roi.getIteratorVals(),skin_roi.getGreenVals());
+    ui->chart_FFT->graph(2)->setData(skin_roi.getIteratorVals(),skin_roi.getRedVals());
+
 
     ui->chart1->replot();
     ui->chart_FFT->replot();

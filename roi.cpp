@@ -67,6 +67,14 @@ void roi::updateBlueVals(){
 QVector<double> roi::getBlueVals(){
     return m_blue_vals;
 }
+QVector<double> roi::getGreenVals(){
+    return m_green_vals;
+}
+
+QVector<double> roi::getRedVals(){
+    return m_red_vals;
+}
+
 
 QVector<double> roi::getIteratorVals(){
     return m_iterator_vals;
@@ -87,15 +95,22 @@ void roi::updateMeans(){
 void roi::updateVals(){
     if(m_iteration<FRAME_SIZE){
         m_blue_vals.append(m_blue_mean[0]);
+        m_green_vals.append(m_green_mean[1]);
+        m_red_vals.append(m_red_mean[2]);
+
         m_iterator_vals.append(m_iteration);
     }
     else if (m_iteration>=FRAME_SIZE){
-        for(int i=0;m_blue_vals.size();i++){
-            if(i!=m_blue_vals.size()){
+        for(int i=0;m_iterator_vals.size();i++){
+            if(i!=m_iterator_vals.size()){
                 m_blue_vals[i]=m_blue_vals[i+1];
+                m_green_vals[i]=m_green_vals[i+1];
+                m_red_vals[i]=m_red_vals[i+1];
                 m_iterator_vals[i]=m_iterator_vals[i+1];
             }else{
                 m_blue_vals[i]=m_blue_mean[0];
+                m_green_vals[i]=m_green_mean[1];
+                m_red_vals[i]=m_red_mean[2];
                 m_iterator_vals[i]=m_iteration;
             }
         }

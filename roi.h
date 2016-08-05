@@ -31,6 +31,9 @@ public:
     int getIteration(void);
 
     void updateBlueVals();
+    void updateGreenVals();
+    void updateRedVals();
+
     void update();
     QVector<double> getBlueVals();
     QVector<double> getGreenVals();
