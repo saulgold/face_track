@@ -9,8 +9,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "VideoFaceDetector.h"
 #include "qcustomplot.h"
-
-
+#include "roi.h"
 using namespace cv;
 /** Global variables */
 VideoCapture m_cap(0);
@@ -19,7 +18,7 @@ cv::String eyes_cascade_name = "haarcascade_eye.xml";
 cv::CascadeClassifier face_cascade;
 cv::CascadeClassifier eyes_cascade;
 VideoFaceDetector detector(face_cascade_name,m_cap);
-
+roi skin_roi;
 
 std::string window_name = "Capture - Face detection";
 cv::RNG rng(12345);
@@ -28,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    if(!m_cap.open(1)){
+    if(!m_cap.open(0)){
         qDebug()<<"webcam no open";
     }
     if( !face_cascade.load( face_cascade_name ) ){ qDebug()<<"can´t find face_cascade xml"; }
@@ -44,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::updateGUI(){
 
+    int iteration = skin_roi.getIteration();
 
     detector>>frame;
 
@@ -52,8 +52,8 @@ void MainWindow::updateGUI(){
 
     if(detector.face().area()!=0){
        m_skinFrame = detector.ROIframe(frame);
+       skin_roi.setRoiMat(detector.ROIframe(frame));
     }
-    cv::Mat icaWeights;
 
 cv::Mat blue, green, red;
     if(!m_skinFrame.empty()){
@@ -67,13 +67,17 @@ cv::Mat blue, green, red;
         m_red_average = cv::mean(red);
 
         graphUpdate();
-
+        skin_roi.increaseIteration();
+        if(iteration>FRAME_SIZE){
+            cv::Mat green_fft;
+            takeFFT(m_green_vals,green_fft);
+        }
 
 
 }
 
     ui->webcam_label->setPixmap(convertOpenCVMatToQtQPixmap(frame));
-    ui->skinLabel->setPixmap(convertOpenCVMatToQtQPixmap2(green));
+    ui->skinLabel->setPixmap(convertOpenCVMatToQtQPixmap2(skin_roi.getGreenRoi()));
 
 
 
@@ -127,12 +131,12 @@ void MainWindow::printMatrix(cv::Mat mat){
     for(int i=0; i<mat.cols;++i){
         for(int j=0;j<mat.rows;++j){
             if(mat.channels() ==3){
-            line.append( QString::number(mat.at<Vec3b>(j,i)[0]));
-           line.append(QString(","));
-           line.append( QString::number (mat.at<Vec3b>(j,i)[1]));
-          line.append(QString(","));
-          line.append( QString::number (mat.at<Vec3b>(j,i)[2]));
-         line.append(QString("    "));
+                line.append( QString::number(mat.at<Vec3b>(j,i)[0]));
+                line.append(QString(","));
+                line.append( QString::number (mat.at<Vec3b>(j,i)[1]));
+                line.append(QString(","));
+                line.append( QString::number (mat.at<Vec3b>(j,i)[2]));
+                line.append(QString("    "));
             }
             else if(mat.channels() ==1){
                 line.append( QString::number(mat.at<uchar>(j,i)));
@@ -165,31 +169,52 @@ void MainWindow::graphInit(void){
     ui->chart1->legend->setVisible(true);
     ui->chart1->setStyleSheet("background:hsva(255,255,255,0%);");
     ui->chart1->setBackground(QBrush(Qt::NoBrush));
+
+    ui->chart_FFT->setStyleSheet("background:hsva(255,255,255,0%);");
+    ui->chart_FFT->setBackground(QBrush(Qt::NoBrush));
+    ui->chart_FFT->addGraph();
+    ui->chart_FFT->graph(0)->setName("FFT");
 }
 
 void MainWindow::graphUpdate(void){
-    if(m_iteration<450){
+    int iteration = skin_roi.getIteration();
+    if(iteration<FRAME_SIZE){
         m_xrange1 =0;
-        m_xrange2=450;
-    }else if(m_iteration>=450){
-        m_xrange1 = m_iteration - 450;
-        m_xrange2 = m_iteration;
+        m_xrange2=FRAME_SIZE;
+    }else if(iteration>=FRAME_SIZE){
+        m_xrange1 = iteration - FRAME_SIZE;
+        m_xrange2 = iteration;
     }
+
     m_yrange1 = (m_blue_average[0] + m_green_average[1]+m_red_average[2])/3 - 100;
     m_yrange2 = (m_blue_average[0] + m_green_average[1]+m_red_average[2])/3 + 100;
     ui->chart1->yAxis->setRange(m_yrange1,m_yrange2);
     ui->chart1->xAxis->setRange(m_xrange1,m_xrange2);
+    ui->chart_FFT->yaxis->setRange(0,255);
+
     ui->chart1->yAxis->setVisible(false);
     ui->chart1->xAxis->setVisible(false);
+
     m_blue_vals.append(m_blue_average[0]);
     m_green_vals.append(m_green_average[1]);
     m_red_vals.append(m_red_average[2]);
 
-    m_frame_iteration.append(m_iteration);
-    m_iteration++;
+    m_frame_iteration.append(iteration);
+    iteration++;
     ui->chart1->graph(0)->setData(m_frame_iteration,m_blue_vals);
     ui->chart1->graph(1)->setData(m_frame_iteration,m_green_vals);
     ui->chart1->graph(2)->setData(m_frame_iteration,m_red_vals);
+    ui->chart_FFT->graph(0)->setData(skin_roi.getIteratorVals(),skin_roi.getBlueVals());
 
     ui->chart1->replot();
+    ui->chart_FFT->replot();
+}
+
+void MainWindow::takeFFT(QVector<double> input_vals , cv::Mat &output_vector ){
+    cv::Mat input_vector;
+    for(int i = m_xrange1; m_xrange2;i++){
+        input_vector.push_back( input_vals[i]);
+    }
+    cv::dft(input_vector,output_vector);
+
 }

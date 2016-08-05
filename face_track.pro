@@ -16,13 +16,15 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     VideoFaceDetector.cpp \
-    qcustomplot.cpp
+    qcustomplot.cpp \
+    roi.cpp
 
 HEADERS  += mainwindow.h \
     VideoFaceDetector.h \
     recursive_ica.h \
     sys_lib.h \
-    qcustomplot.h
+    qcustomplot.h \
+    roi.h
 
 FORMS    += mainwindow.ui
 

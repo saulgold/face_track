@@ -63,6 +63,16 @@
      </rect>
     </property>
    </widget>
+   <widget class="QCustomPlot" name="chart_FFT" native="true">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>50</y>
+      <width>691</width>
+      <height>191</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

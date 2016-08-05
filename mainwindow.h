@@ -37,6 +37,8 @@
 #include <QFileDialog>
 #include <recursive_ica.h>
 
+#define FRAME_SIZE 450
+
 namespace Ui {
 class MainWindow;
 }
@@ -62,7 +64,7 @@ private:
     QString m_filename;
     QVector<double> m_frame_iteration;
     QVector<double> m_green_vals, m_red_vals, m_blue_vals;
-    double m_iteration =0;
+
     cv::Scalar m_blue_average,m_green_average,m_red_average;
     int m_xrange1,m_xrange2, m_yrange1, m_yrange2;
 
@@ -77,6 +79,7 @@ private:
     cv::Mat m_skinFrame;
     void graphInit(void);
     void graphUpdate(void);
+    void takeFFT(QVector<double> input_vals , Mat &output_vector);
     /*ICA object declaration*/
     RecursiveICA *ica=new RecursiveICA(0.995);
 

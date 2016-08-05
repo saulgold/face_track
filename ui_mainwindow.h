@@ -33,6 +33,7 @@ public:
     QPushButton *selectFileButton;
     QLabel *skinLabel;
     QCustomPlot *chart1;
+    QCustomPlot *chart_FFT;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -56,6 +57,9 @@ public:
         chart1 = new QCustomPlot(centralWidget);
         chart1->setObjectName(QStringLiteral("chart1"));
         chart1->setGeometry(QRect(0, 250, 691, 191));
+        chart_FFT = new QCustomPlot(centralWidget);
+        chart_FFT->setObjectName(QStringLiteral("chart_FFT"));
+        chart_FFT->setGeometry(QRect(0, 50, 691, 191));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
