@@ -101,21 +101,28 @@ void roi::updateVals(){
         m_iterator_vals.append(m_iteration);
     }
     else if (m_iteration>=FRAME_SIZE){
-        for(int i=0;m_iterator_vals.size();i++){
-            if(i!=m_iterator_vals.size()){
+        for(int i=0;i<FRAME_SIZE-2;i++){
+  //          if(i!=m_iterator_vals.size()){
+
                 m_blue_vals[i]=m_blue_vals[i+1];
                 m_green_vals[i]=m_green_vals[i+1];
                 m_red_vals[i]=m_red_vals[i+1];
                 m_iterator_vals[i]=m_iterator_vals[i+1];
-            }else{
-                m_blue_vals[i]=m_blue_mean[0];
-                m_green_vals[i]=m_green_mean[1];
-                m_red_vals[i]=m_red_mean[2];
-                m_iterator_vals[i]=m_iteration;
-            }
+ //           }
+//            else if(i==m_iterator_vals.size()){
+//                m_blue_vals[i]=m_blue_mean[0];
+//                m_green_vals[i]=m_green_mean[1];
+//                m_red_vals[i]=m_red_mean[2];
+//                m_iterator_vals[i]=m_iteration;
         }
+        m_blue_vals[FRAME_SIZE-1]=m_blue_mean[0];
+        m_green_vals[FRAME_SIZE-1]=m_green_mean[1];
+        m_red_vals[FRAME_SIZE-1]=m_red_mean[2];
+        m_iterator_vals[FRAME_SIZE-1]=m_iteration;
     }
+
 }
+
 
 void roi::update(){
     setRgbRois();

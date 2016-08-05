@@ -43,45 +43,23 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::updateGUI(){
 
-    int iteration = skin_roi.getIteration();
-
     detector>>frame;
 
     cv::rectangle(frame, detector.face(), cv::Scalar(255, 0, 0));
     cv::circle(frame, detector.facePosition(), 30, cv::Scalar(0, 255, 0));
 
     if(detector.face().area()!=0){
-       m_skinFrame = detector.ROIframe(frame);
        skin_roi.setRoiMat(detector.ROIframe(frame));
     }
 
-cv::Mat blue, green, red;
-    if(!m_skinFrame.empty()){
+    if(!skin_roi.getRoiMat().empty()){
         skin_roi.update();
-
-        blue = m_skinFrame - cv::Scalar(0,255,255);
-        green = m_skinFrame - cv::Scalar(255,0,255);
-        red = m_skinFrame - cv::Scalar(255,255,0);
-
-        m_blue_average = cv::mean(blue);
-        m_green_average = cv::mean(green);
-        m_red_average = cv::mean(red);
-
         graphUpdate();
         skin_roi.increaseIteration();
-        if(iteration>FRAME_SIZE){
-            cv::Mat green_fft;
-            takeFFT(m_green_vals,green_fft);
-        }
-
-
-}
+    }
 
     ui->webcam_label->setPixmap(convertOpenCVMatToQtQPixmap(frame));
     ui->skinLabel->setPixmap(convertOpenCVMatToQtQPixmap2(skin_roi.getGreenRoi()));
-
-
-
 }
 
 MainWindow::~MainWindow()
@@ -151,27 +129,6 @@ void MainWindow::printMatrix(cv::Mat mat){
 }
 
 void MainWindow::graphInit(void){
-    ui->chart1->addGraph();
-    ui->chart1->graph(0)->setName("blue");
-    ui->chart1->graph(0)->setPen(QPen(QColor(0,0,255)));
-
-    ui->chart1->addGraph();
-    ui->chart1->graph(1)->setName("green");
-    ui->chart1->graph(1)->setPen(QPen(QColor(0,255,0)));
-
-    ui->chart1->addGraph();
-    ui->chart1->graph(2)->setName("red");
-    ui->chart1->graph(2)->setPen(QPen(QColor(255,0,0)));
-
-    ui->chart1->xAxis->setLabel("frame");
-    ui->chart1->yAxis->setLabel("intensity");
-    ui->chart1->xAxis->setAutoTickStep(true);
-    ui->chart1->yAxis->setAutoTickStep(true);
-    ui->chart1->legend->setVisible(true);
-    ui->chart1->setStyleSheet("background:hsva(255,255,255,0%);");
-    ui->chart1->setBackground(QBrush(Qt::NoBrush));
-    ui->chart1->yAxis->setVisible(false);
-    ui->chart1->xAxis->setVisible(false);
 
     ui->chart_FFT->xAxis->setLabel("frame");
     ui->chart_FFT->yAxis->setLabel("intensity");
@@ -196,44 +153,19 @@ void MainWindow::graphInit(void){
 }
 
 void MainWindow::graphUpdate(void){
-    int iteration = skin_roi.getIteration();
-    if(iteration<FRAME_SIZE){
-        m_xrange1 =0;
-        m_xrange2=FRAME_SIZE;
-    }else if(iteration>=FRAME_SIZE){
-        m_xrange1 = iteration - FRAME_SIZE;
-        m_xrange2 = iteration;
-    }
 
-    m_yrange1 = (m_blue_average[0] + m_green_average[1]+m_red_average[2])/3 - 100;
-    m_yrange2 = (m_blue_average[0] + m_green_average[1]+m_red_average[2])/3 + 100;
-    ui->chart1->yAxis->setRange(m_yrange1,m_yrange2);
-    ui->chart1->xAxis->setRange(m_xrange1,m_xrange2);
     if(skin_roi.getIteratorVals().size()!=0){
         int x_min = skin_roi.getIteratorVals()[0];
         int x_max = skin_roi.getIteratorVals()[skin_roi.getIteratorVals().size()-1];
         ui->chart_FFT->xAxis->setRange(x_min,x_max);
     }
+
     ui->chart_FFT->yAxis->setRange(0,255);
-
-
-
-    m_blue_vals.append(m_blue_average[0]);
-    m_green_vals.append(m_green_average[1]);
-    m_red_vals.append(m_red_average[2]);
-
-    m_frame_iteration.append(iteration);
-    iteration++;
-    ui->chart1->graph(0)->setData(m_frame_iteration,m_blue_vals);
-    ui->chart1->graph(1)->setData(m_frame_iteration,m_green_vals);
-    ui->chart1->graph(2)->setData(m_frame_iteration,m_red_vals);
 
     ui->chart_FFT->graph(0)->setData(skin_roi.getIteratorVals(),skin_roi.getBlueVals());
     ui->chart_FFT->graph(1)->setData(skin_roi.getIteratorVals(),skin_roi.getGreenVals());
     ui->chart_FFT->graph(2)->setData(skin_roi.getIteratorVals(),skin_roi.getRedVals());
 
-
-    ui->chart1->replot();
     ui->chart_FFT->replot();
 }
 

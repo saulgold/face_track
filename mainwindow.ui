@@ -53,22 +53,12 @@
      <string>TextLabel</string>
     </property>
    </widget>
-   <widget class="QCustomPlot" name="chart1" native="true">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>250</y>
-      <width>691</width>
-      <height>191</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QCustomPlot" name="chart_FFT" native="true">
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>50</y>
-      <width>691</width>
+      <y>20</y>
+      <width>671</width>
       <height>191</height>
      </rect>
     </property>
