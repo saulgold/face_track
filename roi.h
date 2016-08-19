@@ -16,6 +16,7 @@ public:
     void setRgbRois();
     void updateMeans();
     void updateVals();
+    void updateVals2();
 
     cv::Mat getRoiMat();
     cv::Mat getBlueRoi();
@@ -34,6 +35,10 @@ public:
     void updateGreenVals();
     void updateRedVals();
 
+    std::vector<int> normalise(QVector<double> rgb_vals);
+    void makePcaMatrix(std::vector<int> red, std::vector<int> green, std::vector<int> blue, Mat pca_matrix);
+
+
     void update();
     QVector<double> getBlueVals();
     QVector<double> getGreenVals();
@@ -48,7 +53,7 @@ private:
     cv::Scalar m_blue_mean;
     cv::Scalar m_green_mean;
     cv::Scalar m_red_mean;
-
+    cv::Mat m_normalised_mat;
     int m_iteration=0;
 
     QVector<double> m_blue_vals;
