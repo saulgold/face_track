@@ -17,14 +17,16 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     VideoFaceDetector.cpp \
     qcustomplot.cpp \
-    roi.cpp
+    roi.cpp \
+    fft.cpp
 
 HEADERS  += mainwindow.h \
     VideoFaceDetector.h \
     recursive_ica.h \
     sys_lib.h \
     qcustomplot.h \
-    roi.h
+    roi.h \
+    fft.h
 
 FORMS    += mainwindow.ui
 

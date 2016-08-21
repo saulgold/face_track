@@ -47,13 +47,15 @@ SOURCES       = main.cpp \
 		mainwindow.cpp \
 		VideoFaceDetector.cpp \
 		qcustomplot.cpp \
-		roi.cpp debug\moc_mainwindow.cpp \
+		roi.cpp \
+		fft.cpp debug\moc_mainwindow.cpp \
 		debug\moc_qcustomplot.cpp
 OBJECTS       = debug\main.obj \
 		debug\mainwindow.obj \
 		debug\VideoFaceDetector.obj \
 		debug\qcustomplot.obj \
 		debug\roi.obj \
+		debug\fft.obj \
 		debug\moc_mainwindow.obj \
 		debug\moc_qcustomplot.obj
 
@@ -62,11 +64,13 @@ DIST          =  mainwindow.h \
 		recursive_ica.h \
 		sys_lib.h \
 		qcustomplot.h \
-		roi.h main.cpp \
+		roi.h \
+		fft.h main.cpp \
 		mainwindow.cpp \
 		VideoFaceDetector.cpp \
 		qcustomplot.cpp \
-		roi.cpp
+		roi.cpp \
+		fft.cpp
 QMAKE_TARGET  = face_track
 DESTDIR        = debug\ #avoid trailing-slash linebreak
 TARGET         = face_track.exe
@@ -135,7 +139,7 @@ dist:
 	$(ZIP) face_track.zip $(SOURCES) $(DIST) face_track.pro ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\spec_pre.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\common\msvc-desktop.conf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\qconfig.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_3dcollision.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_3dcollision_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_3dcore.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_3dcore_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_3dinput.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_3dinput_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_3dlogic.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_3dlogic_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_3dquick.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_3dquick_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_3dquickrenderer.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_3dquickrenderer_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_3drenderer.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_3drenderer_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_axbase.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_axbase_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_axcontainer.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_axcontainer_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_axserver.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_axserver_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_bluetooth.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_bluetooth_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_bootstrap_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_clucene_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_concurrent.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_concurrent_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_core.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_core_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_dbus.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_dbus_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_declarative.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_declarative_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_designer.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_designer_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_designercomponents_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_enginio.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_enginio_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_gui.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_gui_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_help.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_help_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_location.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_location_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_multimedia.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_multimedia_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_multimediawidgets.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_multimediawidgets_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_network.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_network_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_nfc.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_nfc_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_opengl.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_opengl_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_openglextensions.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_openglextensions_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_platformsupport_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_positioning.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_positioning_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_printsupport.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_printsupport_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_qml.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_qml_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_qmldevtools_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_qmltest.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_qmltest_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_qtmultimediaquicktools_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_quick.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_quick_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_quickparticles_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_quickwidgets.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_quickwidgets_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_script.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_script_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_scripttools.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_scripttools_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_sensors.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_sensors_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_serialport.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_serialport_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_sql.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_sql_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_svg.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_svg_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_testlib.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_testlib_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_uiplugin.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_uitools.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_uitools_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_webchannel.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_webchannel_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_webengine.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_webengine_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_webenginecore.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_webenginecore_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_webenginewidgets.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_webenginewidgets_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_webkit.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_webkit_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_webkitwidgets.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_webkitwidgets_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_websockets.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_websockets_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_webview_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_widgets.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_widgets_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_winextras.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_winextras_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_xml.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_xml_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_xmlpatterns.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\modules\qt_lib_xmlpatterns_private.pri ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\qt_functions.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\qt_config.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\win32\qt_config.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\win32-msvc2013\qmake.conf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\spec_post.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\exclusive_builds.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\default_pre.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\win32\default_pre.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\resolve_config.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\exclusive_builds_post.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\default_post.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\build_pass.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\qml_debug.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\declarative_debug.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\win32\rtti.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\c++11.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\precompile_header.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\warn_on.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\qt.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\resources.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\moc.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\win32\opengl.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\uic.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\win32\windows.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\testcase_targets.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\exceptions.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\yacc.prf ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\mkspecs\features\lex.prf face_track.pro C:/Qt/Qt5.5.1/5.5/msvc2013/lib/qtmaind.prl C:/Qt/Qt5.5.1/5.5/msvc2013/lib/Qt5PrintSupportd.prl C:/Qt/Qt5.5.1/5.5/msvc2013/lib/Qt5Widgetsd.prl C:/Qt/Qt5.5.1/5.5/msvc2013/lib/Qt5Guid.prl C:/Qt/Qt5.5.1/5.5/msvc2013/lib/Qt5Cored.prl  NO_PCH_SOURCES RESOURCES HEADERS SOURCES OBJECTIVE_SOURCES FORMS YACCSOURCES YACCSOURCES LEXSOURCES 
 
 clean: compiler_clean 
-	-$(DEL_FILE) debug\main.obj debug\mainwindow.obj debug\VideoFaceDetector.obj debug\qcustomplot.obj debug\roi.obj debug\moc_mainwindow.obj debug\moc_qcustomplot.obj
+	-$(DEL_FILE) debug\main.obj debug\mainwindow.obj debug\VideoFaceDetector.obj debug\qcustomplot.obj debug\roi.obj debug\fft.obj debug\moc_mainwindow.obj debug\moc_qcustomplot.obj
 	-$(DEL_FILE) debug\face_track.exp debug\face_track.ilk debug\face_track.idb
 
 distclean: clean 
@@ -443,6 +447,7 @@ debug\moc_mainwindow.cpp: ..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\include\QtWidgets\
 		..\..\..\..\opencv2413\build\include\opencv2\core\internal.hpp \
 		..\..\..\..\opencv2413\build\include\opencv2\core\eigen.hpp \
 		..\..\..\..\opencv2413\build\include\opencv2\nonfree\features2d.hpp \
+		fft.h \
 		mainwindow.h
 	C:\Qt\Qt5.5.1\5.5\msvc2013\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -IC:/Qt/Qt5.5.1/5.5/msvc2013/mkspecs/win32-msvc2013 -IC:/Users/saul/Documents/face_track -IC:/opencv2413/build/include -IC:/opencv2413/build/include/opencv -IC:/opencv2413/build/include/opencv2 -IC:/Qt/Qt5.5.1/5.5/msvc2013/include -IC:/Qt/Qt5.5.1/5.5/msvc2013/include/QtPrintSupport -IC:/Qt/Qt5.5.1/5.5/msvc2013/include/QtWidgets -IC:/Qt/Qt5.5.1/5.5/msvc2013/include/QtGui -IC:/Qt/Qt5.5.1/5.5/msvc2013/include/QtANGLE -IC:/Qt/Qt5.5.1/5.5/msvc2013/include/QtCore mainwindow.h -o debug\moc_mainwindow.cpp
 
@@ -1712,6 +1717,7 @@ debug\main.obj: main.cpp mainwindow.h \
 		..\..\..\..\opencv2413\build\include\opencv2\core\internal.hpp \
 		..\..\..\..\opencv2413\build\include\opencv2\core\eigen.hpp \
 		..\..\..\..\opencv2413\build\include\opencv2\nonfree\features2d.hpp \
+		fft.h \
 		..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\include\QtWidgets\QApplication \
 		..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\include\QtWidgets\qapplication.h \
 		..\..\..\..\Qt\Qt5.5.1\5.5\msvc2013\include\QtWidgets\qdesktopwidget.h \
@@ -2006,6 +2012,7 @@ debug\mainwindow.obj: mainwindow.cpp mainwindow.h \
 		..\..\..\..\opencv2413\build\include\opencv2\core\internal.hpp \
 		..\..\..\..\opencv2413\build\include\opencv2\core\eigen.hpp \
 		..\..\..\..\opencv2413\build\include\opencv2\nonfree\features2d.hpp \
+		fft.h \
 		ui_mainwindow.h \
 		VideoFaceDetector.h \
 		..\..\..\..\opencv2413\build\include\opencv2\core.hpp \
@@ -3055,7 +3062,10 @@ debug\roi.obj: roi.cpp roi.h \
 		..\..\..\..\opencv2413\build\include\opencv2\legacy\compat.hpp \
 		..\..\..\..\opencv2413\build\include\opencv2\core\internal.hpp \
 		..\..\..\..\opencv2413\build\include\opencv2\core\eigen.hpp \
-		..\..\..\..\opencv2413\build\include\opencv2\nonfree\features2d.hpp
+		..\..\..\..\opencv2413\build\include\opencv2\nonfree\features2d.hpp \
+		fft.h
+
+debug\fft.obj: fft.cpp fft.h
 
 debug\moc_mainwindow.obj: debug\moc_mainwindow.cpp 
 

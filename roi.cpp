@@ -147,26 +147,29 @@ std::vector<int> roi::normalise(QVector<double> rgb_vals){
     int variance=0;
     int standard_deviation=0;
     cv::vector<int> output_vals;
+    if(!rgb_vals.empty()){
 
-    //find mean
-    for(int i =0;i<rgb_vals.size();i++){
-        mean += rgb_vals[i];
-    }
-    mean = mean / rgb_vals.size();
-    //find standard deviation
-    for(int i =0;i<rgb_vals.size();i++){
-        variance += std::pow(rgb_vals[i] - mean,2);
-    }
-    standard_deviation=std::sqrt(variance);
 
-    //normalise
-    for(int i = 0; i<rgb_vals.size();i++){
+        //find mean
+        for(int i =0;i<rgb_vals.size();i++){
+            mean += rgb_vals[i];
+        }
+        mean = mean / rgb_vals.size();
+        //find standard deviation
+        for(int i =0;i<rgb_vals.size();i++){
+            variance += std::pow(rgb_vals[i] - mean,2);
+        }
+        standard_deviation=std::sqrt(variance);
 
-        output_vals.push_back((rgb_vals[i]-mean)/standard_deviation);
+        //normalise
+        for(int i = 0; i<rgb_vals.size();i++){
+
+            output_vals.push_back((rgb_vals[i]-mean)/standard_deviation);
+        }
     }
     return output_vals;
 }
-void normaliseRGB(void){
+void roi::normaliseRGB(void){
     normalise(m_red_vals);
     normalise(m_blue_vals);
     normalise(m_green_vals);
@@ -177,11 +180,29 @@ void roi::makePcaMatrix(std::vector<int> red, std::vector<int> green, std::vecto
     pca_matrix.row(1).setTo(green);
     pca_matrix.row(2).setTo(blue);
 }
-void roi::takePCA(cv::Mat matrix){
-    cv::PCA pca(matrix,cv::Mat(),CV_PCA_DATA_AS_ROW,3);
-    for(int i =0;<matrix.rows;i++){
-        pca.project(hj)
-    }
+//void roi::takePCA(cv::Mat matrix){
+//    cv::PCA pca(matrix,cv::Mat(),CV_PCA_DATA_AS_ROW,3);
+//    for(int i =0;<matrix.rows;i++){
+//        pca.project(hj)
+//    }
+//}
+
+void roi::takeFFT(){
+
+    std::vector<double> real_vector (10);
+    std::vector<double> imaginary_vector(10);
+        if(!real_vector.empty()){
+            Fft::transform(real_vector,imaginary_vector);
+        }
+
+//    int c = m_red_vals.size();
+//    cv::Mat input = Mat::zeros(1,c,CV_8UC1);
+//    cv::Mat output = Mat::zeros(1,c, CV_8UC1);
+//    input.row(0).setTo( m_red_vals.toStdVector());
+
+  //  cv::dft(input,output,DFT_ROWS);
+    //cv::dft(m_green_vals.toStdVector(),m_green_frequency);
+    //cv::dft(m_blue_vals.toStdVector(),m_blue_frequency);
 }
 
 void roi::update(){

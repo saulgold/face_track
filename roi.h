@@ -37,7 +37,8 @@ public:
 
     std::vector<int> normalise(QVector<double> rgb_vals);
     void makePcaMatrix(std::vector<int> red, std::vector<int> green, std::vector<int> blue, Mat pca_matrix);
-
+    void normaliseRGB(void);
+    void takeFFT(void);
 
     void update();
     QVector<double> getBlueVals();
@@ -60,6 +61,10 @@ private:
     QVector<double> m_green_vals;
     QVector<double> m_red_vals;
     QVector<double> m_iterator_vals;
+
+    cv::Mat m_red_frequency;
+    cv::Mat m_green_frequency;
+    cv::Mat m_blue_frequency;
 };
 
 

@@ -12,7 +12,7 @@
 #include "roi.h"
 using namespace cv;
 /** Global variables */
-VideoCapture m_cap(1);
+VideoCapture m_cap(0);
 cv::String face_cascade_name = "haarcascade_frontalface_alt2.xml";
 cv::String eyes_cascade_name = "haarcascade_eye.xml";
 cv::CascadeClassifier face_cascade;
@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    if(!m_cap.open(1)){
+    if(!m_cap.open(0)){
         qDebug()<<"webcam no open";
     }
     if( !face_cascade.load( face_cascade_name ) ){ qDebug()<<"can´t find face_cascade xml"; }
@@ -56,6 +56,8 @@ void MainWindow::updateGUI(){
         skin_roi.update();
         graphUpdate();
         skin_roi.increaseIteration();
+        skin_roi.normaliseRGB();
+        skin_roi.takeFFT();
         //qDebug()<<skin_roi.getBlueRoi();
     }
 

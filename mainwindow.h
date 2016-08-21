@@ -36,7 +36,14 @@
 #include <QTime>
 #include <QFileDialog>
 #include <recursive_ica.h>
+#include <algorithm>
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
+#include <iomanip>
+#include <iostream>
 
+#include "fft.h"
 #define FRAME_SIZE 450
 
 namespace Ui {
