@@ -62,6 +62,8 @@ private:
     QVector<double> m_red_vals;
     QVector<double> m_iterator_vals;
 
+    std::vector<double> m_red_fft;
+
     cv::Mat m_red_frequency;
     cv::Mat m_green_frequency;
     cv::Mat m_blue_frequency;

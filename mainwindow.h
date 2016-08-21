@@ -62,6 +62,8 @@ private slots:
 
     void on_selectFileButton_clicked();
 
+    void on_saveDataButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 

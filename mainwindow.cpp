@@ -180,3 +180,21 @@ void MainWindow::takeFFT(QVector<double> input_vals , cv::Mat &output_vector ){
     cv::dft(input_vector,output_vector);
 
 }
+
+void MainWindow::on_saveDataButton_clicked()
+{
+    //QFileDialog dialog(this);
+    //dialog.setFileMode(QFileDialog::AnyFile);
+    QString csv_file;
+    csv_file= QFileDialog::getSaveFileName(this,tr("new csv"),"C:/Users/saul/Documents/MSc_Thesis/");
+    QFile data (csv_file);
+    if(data.open(QFile::WriteOnly|QFile::Truncate)){
+        QTextStream output(&data);
+        QVector<double> vector;
+        vector = skin_roi.getRedVals();
+
+        for(size_t i=0; i<vector.size();i++ ){
+            output << vector[i]<<", ";
+        }
+    }
+}

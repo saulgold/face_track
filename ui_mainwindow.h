@@ -33,6 +33,7 @@ public:
     QPushButton *selectFileButton;
     QLabel *skinLabel;
     QCustomPlot *chart_FFT;
+    QPushButton *saveDataButton;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -56,6 +57,9 @@ public:
         chart_FFT = new QCustomPlot(centralWidget);
         chart_FFT->setObjectName(QStringLiteral("chart_FFT"));
         chart_FFT->setGeometry(QRect(0, 20, 671, 191));
+        saveDataButton = new QPushButton(centralWidget);
+        saveDataButton->setObjectName(QStringLiteral("saveDataButton"));
+        saveDataButton->setGeometry(QRect(720, 40, 80, 21));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -79,6 +83,7 @@ public:
         webcam_label->setText(QApplication::translate("MainWindow", "TextLabel", 0));
         selectFileButton->setText(QApplication::translate("MainWindow", "select file", 0));
         skinLabel->setText(QApplication::translate("MainWindow", "TextLabel", 0));
+        saveDataButton->setText(QApplication::translate("MainWindow", "save data", 0));
     } // retranslateUi
 
 };

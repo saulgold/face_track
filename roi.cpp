@@ -187,12 +187,14 @@ void roi::makePcaMatrix(std::vector<int> red, std::vector<int> green, std::vecto
 //    }
 //}
 
-void roi::takeFFT(){
+void roi::takeFFT(void){
 
-    std::vector<double> real_vector (10);
-    std::vector<double> imaginary_vector(10);
+    int length = m_red_vals.size();
+    std::vector<double> real_vector = m_red_vals.toStdVector();
+    std::vector<double> imaginary_vector(length);
         if(!real_vector.empty()){
             Fft::transform(real_vector,imaginary_vector);
+            m_red_fft = real_vector;
         }
 
 //    int c = m_red_vals.size();
