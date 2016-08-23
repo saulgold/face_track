@@ -65,19 +65,19 @@ void roi::updateBlueVals(){
 
 }
 QVector<double> roi::getBlueVals(){
-    return m_blue_vals;
+    return this->m_blue_vals;
 }
 QVector<double> roi::getGreenVals(){
-    return m_green_vals;
+    return this->m_green_vals;
 }
 
 QVector<double> roi::getRedVals(){
-    return m_red_vals;
+    return this->m_red_vals;
 }
 
 
 QVector<double> roi::getIteratorVals(){
-    return m_iterator_vals;
+    return this->m_iterator_vals;
 }
 void roi::setRgbRois(){
     m_blue_roi = roi_mat - cv::Scalar(0,255,255);
@@ -117,7 +117,7 @@ void roi::updateVals2(){
         m_iterator_vals.append(m_iteration);
     }
     else if (m_iteration>=FRAME_SIZE){
-        for(int i=0;i<FRAME_SIZE-2;i++){
+        for(int i=0;i<FRAME_SIZE-1;i++){
 
                 m_blue_vals[i]=m_blue_vals[i+1];
                 m_green_vals[i]=m_green_vals[i+1];
@@ -133,6 +133,7 @@ void roi::updateVals2(){
         m_green_vals.push_back(m_green_mean[1]);
         m_red_vals.push_back(m_red_mean[2]);
         m_iterator_vals.push_back(m_iteration);
+        qDebug()<<m_red_vals;
     }
 
 }
@@ -170,9 +171,21 @@ std::vector<int> roi::normalise(QVector<double> rgb_vals){
     return output_vals;
 }
 void roi::normaliseRGB(void){
-    normalise(m_red_vals);
-    normalise(m_blue_vals);
-    normalise(m_green_vals);
+   m_red_norm = normalise(m_red_vals);
+   m_green_norm =  normalise(m_blue_vals);
+   m_blue_norm= normalise(m_green_vals);
+}
+
+std::vector<int> roi::getRedNorm(){
+    return this->m_red_norm;
+}
+
+std::vector<int> roi::getGreenNorm(){
+    return this->m_green_norm;
+}
+
+std::vector<int> roi::getBlueNorm(){
+    return this->m_blue_norm;
 }
 
 void roi::makePcaMatrix(std::vector<int> red, std::vector<int> green, std::vector<int> blue, cv::Mat pca_matrix){
@@ -210,5 +223,5 @@ void roi::takeFFT(void){
 void roi::update(){
     this->setRgbRois();
     this->updateMeans();
-    this->updateVals();
+    this->updateVals2();
 }

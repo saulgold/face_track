@@ -46,6 +46,10 @@ public:
     QVector<double> getRedVals();
     QVector<double> getIteratorVals();
 
+    std::vector<int> getRedNorm();
+    std::vector<int> getGreenNorm();
+    std::vector<int> getBlueNorm();
+
 private:
     cv::Mat m_blue_roi;
     cv::Mat m_green_roi;
@@ -61,6 +65,11 @@ private:
     QVector<double> m_green_vals;
     QVector<double> m_red_vals;
     QVector<double> m_iterator_vals;
+
+    std::vector<int> m_red_norm;
+    std::vector<int> m_green_norm;
+    std::vector<int> m_blue_norm;
+
 
     std::vector<double> m_red_fft;
 
