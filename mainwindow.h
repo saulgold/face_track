@@ -44,7 +44,7 @@
 #include <iostream>
 
 #include "fft.h"
-#define FRAME_SIZE 30
+#define FRAME_SIZE 450
 
 namespace Ui {
 class MainWindow;

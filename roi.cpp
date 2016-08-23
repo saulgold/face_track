@@ -142,12 +142,12 @@ void roi::updateVals2(){
 //    cv::normalize()
 //}
 
-std::vector<int> roi::normalise(QVector<double> rgb_vals){
+std::vector<float> roi::normalise(QVector<double> rgb_vals){
 
     int mean=0;
     int variance=0;
     int standard_deviation=0;
-    cv::vector<int> output_vals;
+    cv::vector<float> output_vals;
     if(!rgb_vals.empty()){
 
 
@@ -164,8 +164,10 @@ std::vector<int> roi::normalise(QVector<double> rgb_vals){
 
         //normalise
         for(int i = 0; i<rgb_vals.size();i++){
+            float norm_val = (rgb_vals[i]-mean);
+            norm_val = norm_val/standard_deviation;
 
-            output_vals.push_back((rgb_vals[i]-mean)/standard_deviation);
+            output_vals.push_back(norm_val);
         }
     }
     return output_vals;
@@ -176,15 +178,15 @@ void roi::normaliseRGB(void){
    m_blue_norm= normalise(m_green_vals);
 }
 
-std::vector<int> roi::getRedNorm(){
+std::vector<float> roi::getRedNorm(){
     return this->m_red_norm;
 }
 
-std::vector<int> roi::getGreenNorm(){
+std::vector<float> roi::getGreenNorm(){
     return this->m_green_norm;
 }
 
-std::vector<int> roi::getBlueNorm(){
+std::vector<float> roi::getBlueNorm(){
     return this->m_blue_norm;
 }
 

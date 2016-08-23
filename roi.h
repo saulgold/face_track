@@ -35,7 +35,7 @@ public:
     void updateGreenVals();
     void updateRedVals();
 
-    std::vector<int> normalise(QVector<double> rgb_vals);
+    std::vector<float> normalise(QVector<double> rgb_vals);
     void makePcaMatrix(std::vector<int> red, std::vector<int> green, std::vector<int> blue, Mat pca_matrix);
     void normaliseRGB(void);
     void takeFFT(void);
@@ -46,9 +46,9 @@ public:
     QVector<double> getRedVals();
     QVector<double> getIteratorVals();
 
-    std::vector<int> getRedNorm();
-    std::vector<int> getGreenNorm();
-    std::vector<int> getBlueNorm();
+    std::vector<float> getRedNorm();
+    std::vector<float> getGreenNorm();
+    std::vector<float> getBlueNorm();
 
 private:
     cv::Mat m_blue_roi;
@@ -66,9 +66,9 @@ private:
     QVector<double> m_red_vals;
     QVector<double> m_iterator_vals;
 
-    std::vector<int> m_red_norm;
-    std::vector<int> m_green_norm;
-    std::vector<int> m_blue_norm;
+    std::vector<float> m_red_norm;
+    std::vector<float> m_green_norm;
+    std::vector<float> m_blue_norm;
 
 
     std::vector<double> m_red_fft;

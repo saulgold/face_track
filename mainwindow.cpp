@@ -194,7 +194,7 @@ void MainWindow::on_saveDataButton_clicked()
         vector_red = skin_roi.getRedVals();
         vector_green = skin_roi.getGreenVals();
         vector_blue = skin_roi.getBlueVals();
-        std::vector<int> norm_red= skin_roi.getRedNorm();
+        std::vector<float> norm_red= skin_roi.getRedNorm();
         output<<"red, green, blue,red norm, blue norm,green norm"<<endl;
         for(size_t i=0; i<vector_red.size();i++ ){
             output << vector_red[i]<<","<<vector_green[i]<<","<<vector_blue[i]<<","
