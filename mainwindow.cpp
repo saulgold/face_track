@@ -57,6 +57,7 @@ void MainWindow::updateGUI(){
         graphUpdate();
         skin_roi.increaseIteration();
         skin_roi.normaliseRGB();
+        skin_roi.setTestSignal(signalGenerate());
         skin_roi.takeFFT();
         //qDebug()<<skin_roi.getBlueRoi();
     }
@@ -195,10 +196,34 @@ void MainWindow::on_saveDataButton_clicked()
         vector_green = skin_roi.getGreenVals();
         vector_blue = skin_roi.getBlueVals();
         std::vector<float> norm_red= skin_roi.getRedNorm();
-        output<<"red, green, blue,red norm, blue norm,green norm"<<endl;
+        output<<"red, green, blue,red norm, blue norm,green norm, test fft, test signal"<<endl;
         for(size_t i=0; i<vector_red.size();i++ ){
             output << vector_red[i]<<","<<vector_green[i]<<","<<vector_blue[i]<<","
-                   << norm_red[i]<<","<< skin_roi.getGreenNorm()[i]<<","<<skin_roi.getBlueNorm()[i]<<endl;
+                   << norm_red[i]<<","<< skin_roi.getGreenNorm()[i]<<","<<skin_roi.getBlueNorm()[i]
+                   <<","<<skin_roi.getRedFft()[i]<<","<<skin_roi.getTestSignal()[i]<<endl;
         }
     }
+}
+
+vector<double> MainWindow::signalGenerate(void){
+    std::vector<double> signal;
+    int flag=0;
+    for (int i=0;i<450;i++){
+        if(i%10==0){
+            if(flag==0){
+                flag =1;
+            }
+            else if(flag==1){
+                flag=0;
+            }
+        }
+
+        if(flag==1){
+            signal.push_back(1);
+        }
+        else if(flag==0){
+            signal.push_back(0);
+        }
+    }
+    return signal;
 }

@@ -201,15 +201,29 @@ void roi::makePcaMatrix(std::vector<int> red, std::vector<int> green, std::vecto
 //        pca.project(hj)
 //    }
 //}
+std::vector<double> roi::getRedFft(){
+    return this->m_red_fft;
+}
+void roi::setTestSignal(std::vector<double>input_signal){
+    m_test_signal = input_signal;
+}
+std::vector<double> roi::getTestSignal(){
+    return m_test_signal;
+}
 
 void roi::takeFFT(void){
 
-    int length = m_red_vals.size();
-    std::vector<double> real_vector = m_red_vals.toStdVector();
+
+    int length = m_test_signal.size();
+    std::vector<double> real_vector = m_test_signal;
     std::vector<double> imaginary_vector(length);
         if(!real_vector.empty()){
             Fft::transform(real_vector,imaginary_vector);
-            m_red_fft = real_vector;
+            m_red_fft.clear();
+            for(int i=0;i<real_vector.size();i++){
+                m_red_fft.push_back( std::sqrt(std::pow(real_vector[i],2)+std::pow(imaginary_vector[i],2)));
+            }
+
         }
 
 //    int c = m_red_vals.size();

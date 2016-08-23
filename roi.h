@@ -50,6 +50,9 @@ public:
     std::vector<float> getGreenNorm();
     std::vector<float> getBlueNorm();
 
+    std::vector<double> getRedFft();
+    void setTestSignal(std::vector<double>input_signal);
+    std::vector<double> getTestSignal();
 private:
     cv::Mat m_blue_roi;
     cv::Mat m_green_roi;
@@ -72,7 +75,7 @@ private:
 
 
     std::vector<double> m_red_fft;
-
+    std::vector<double> m_test_signal;
     cv::Mat m_red_frequency;
     cv::Mat m_green_frequency;
     cv::Mat m_blue_frequency;

@@ -91,6 +91,7 @@ private:
     void takeFFT(QVector<double> input_vals , Mat &output_vector);
     /*ICA object declaration*/
     RecursiveICA *ica=new RecursiveICA(0.995);
+    vector<double> signalGenerate(void);
 
 };
 
