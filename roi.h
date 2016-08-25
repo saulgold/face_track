@@ -35,10 +35,10 @@ public:
     void updateGreenVals();
     void updateRedVals();
 
-    std::vector<float> normalise(QVector<double> rgb_vals);
+    std::vector<double> normalise(QVector<double> rgb_vals);
     void makePcaMatrix(std::vector<int> red, std::vector<int> green, std::vector<int> blue, Mat pca_matrix);
     void normaliseRGB(void);
-    void takeFFT(void);
+    std::vector<double> takeFFT(std::vector<double> signal);
 
     void update();
     QVector<double> getBlueVals();
@@ -46,13 +46,16 @@ public:
     QVector<double> getRedVals();
     QVector<double> getIteratorVals();
 
-    std::vector<float> getRedNorm();
-    std::vector<float> getGreenNorm();
-    std::vector<float> getBlueNorm();
+    std::vector<double> getRedNorm();
+    std::vector<double> getGreenNorm();
+    std::vector<double> getBlueNorm();
 
     std::vector<double> getRedFft();
     void setTestSignal(std::vector<double>input_signal);
     std::vector<double> getTestSignal();
+    cv::Mat createIcaMatrix(std::vector<double> red, std::vector<double> green, std::vector<double> blue); //create ica matrix from normalised signals
+    void setIcaMatrix(cv::Mat ica_matrix);
+    cv::Mat getIcaMatrix(void);
 private:
     cv::Mat m_blue_roi;
     cv::Mat m_green_roi;
@@ -69,9 +72,9 @@ private:
     QVector<double> m_red_vals;
     QVector<double> m_iterator_vals;
 
-    std::vector<float> m_red_norm;
-    std::vector<float> m_green_norm;
-    std::vector<float> m_blue_norm;
+    std::vector<double> m_red_norm;
+    std::vector<double> m_green_norm;
+    std::vector<double> m_blue_norm;
 
 
     std::vector<double> m_red_fft;
@@ -79,6 +82,8 @@ private:
     cv::Mat m_red_frequency;
     cv::Mat m_green_frequency;
     cv::Mat m_blue_frequency;
+
+    cv::Mat m_ica_matrix;
 };
 
 

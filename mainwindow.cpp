@@ -10,6 +10,7 @@
 #include "VideoFaceDetector.h"
 #include "qcustomplot.h"
 #include "roi.h"
+#include "fast_ica.h"
 using namespace cv;
 /** Global variables */
 VideoCapture m_cap(0);
@@ -57,8 +58,11 @@ void MainWindow::updateGUI(){
         graphUpdate();
         skin_roi.increaseIteration();
         skin_roi.normaliseRGB();
-        skin_roi.setTestSignal(signalGenerate());
-        skin_roi.takeFFT();
+        cv::Mat ica_matrix = skin_roi.createIcaMatrix(skin_roi.getRedNorm(),skin_roi.getGreenNorm(),skin_roi.getBlueNorm());
+        skin_roi.setIcaMatrix(ica_matrix);
+        //skin_roi.setTestSignal(signalGenerate());
+        //skin_roi.takeFFT();
+
         //qDebug()<<skin_roi.getBlueRoi();
     }
 
@@ -195,7 +199,7 @@ void MainWindow::on_saveDataButton_clicked()
         vector_red = skin_roi.getRedVals();
         vector_green = skin_roi.getGreenVals();
         vector_blue = skin_roi.getBlueVals();
-        std::vector<float> norm_red= skin_roi.getRedNorm();
+        std::vector<double> norm_red= skin_roi.getRedNorm();
         output<<"red, green, blue,red norm, blue norm,green norm, test fft, test signal"<<endl;
         for(size_t i=0; i<vector_red.size();i++ ){
             output << vector_red[i]<<","<<vector_green[i]<<","<<vector_blue[i]<<","

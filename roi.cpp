@@ -142,12 +142,12 @@ void roi::updateVals2(){
 //    cv::normalize()
 //}
 
-std::vector<float> roi::normalise(QVector<double> rgb_vals){
+std::vector<double> roi::normalise(QVector<double> rgb_vals){
 
     int mean=0;
     int variance=0;
     int standard_deviation=0;
-    cv::vector<float> output_vals;
+    cv::vector<double> output_vals;
     if(!rgb_vals.empty()){
 
 
@@ -164,7 +164,7 @@ std::vector<float> roi::normalise(QVector<double> rgb_vals){
 
         //normalise
         for(int i = 0; i<rgb_vals.size();i++){
-            float norm_val = (rgb_vals[i]-mean);
+            double norm_val = (rgb_vals[i]-mean);
             norm_val = norm_val/standard_deviation;
 
             output_vals.push_back(norm_val);
@@ -178,15 +178,15 @@ void roi::normaliseRGB(void){
    m_blue_norm= normalise(m_green_vals);
 }
 
-std::vector<float> roi::getRedNorm(){
+std::vector<double> roi::getRedNorm(){
     return this->m_red_norm;
 }
 
-std::vector<float> roi::getGreenNorm(){
+std::vector<double> roi::getGreenNorm(){
     return this->m_green_norm;
 }
 
-std::vector<float> roi::getBlueNorm(){
+std::vector<double> roi::getBlueNorm(){
     return this->m_blue_norm;
 }
 
@@ -195,6 +195,22 @@ void roi::makePcaMatrix(std::vector<int> red, std::vector<int> green, std::vecto
     pca_matrix.row(1).setTo(green);
     pca_matrix.row(2).setTo(blue);
 }
+ cv::Mat roi::createIcaMatrix(std::vector<double> red, std::vector<double> green, std::vector<double> blue){
+     cv::Mat ica_matrix;
+     ica_matrix.row(0).setTo(red);
+     ica_matrix.row(1).setTo(blue);
+     ica_matrix.row(2).setTo(green);
+
+     return ica_matrix;
+
+ }
+void roi::setIcaMatrix(cv::Mat ica_matrix){
+    this->m_ica_matrix = ica_matrix;
+}
+cv::Mat roi::getIcaMatrix(void){
+    return this->m_ica_matrix;
+}
+
 //void roi::takePCA(cv::Mat matrix){
 //    cv::PCA pca(matrix,cv::Mat(),CV_PCA_DATA_AS_ROW,3);
 //    for(int i =0;<matrix.rows;i++){
@@ -211,21 +227,21 @@ std::vector<double> roi::getTestSignal(){
     return m_test_signal;
 }
 
-void roi::takeFFT(void){
+std::vector<double> roi::takeFFT(std::vector <double> signal){
+    std::vector<double> output;
 
-
-    int length = m_test_signal.size();
-    std::vector<double> real_vector = m_test_signal;
+    int length = signal.size();
+    std::vector<double> real_vector = signal;
     std::vector<double> imaginary_vector(length);
         if(!real_vector.empty()){
             Fft::transform(real_vector,imaginary_vector);
             m_red_fft.clear();
             for(int i=0;i<real_vector.size();i++){
-                m_red_fft.push_back( std::sqrt(std::pow(real_vector[i],2)+std::pow(imaginary_vector[i],2)));
+                output.push_back( std::sqrt(std::pow(real_vector[i],2)+std::pow(imaginary_vector[i],2)));
             }
 
         }
-
+    return output;
 //    int c = m_red_vals.size();
 //    cv::Mat input = Mat::zeros(1,c,CV_8UC1);
 //    cv::Mat output = Mat::zeros(1,c, CV_8UC1);

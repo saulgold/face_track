@@ -26,7 +26,8 @@ HEADERS  += mainwindow.h \
     sys_lib.h \
     qcustomplot.h \
     roi.h \
-    fft.h
+    fft.h \
+    fast_ica.h
 
 FORMS    += mainwindow.ui
 
