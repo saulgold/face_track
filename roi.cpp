@@ -196,11 +196,18 @@ void roi::makePcaMatrix(std::vector<int> red, std::vector<int> green, std::vecto
     pca_matrix.row(2).setTo(blue);
 }
  cv::Mat roi::createIcaMatrix(std::vector<double> red, std::vector<double> green, std::vector<double> blue){
-     cv::Mat ica_matrix;
-     ica_matrix.row(0).setTo(red);
-     ica_matrix.row(1).setTo(blue);
-     ica_matrix.row(2).setTo(green);
+     std::vector <vector <double> > vector_matrix;
 
+     vector_matrix.push_back(red);
+     vector_matrix.push_back(green);
+     vector_matrix.push_back(blue);
+      cv::Mat ica_matrix(3,vector_matrix.at(0).size(),CV_64FC1);
+
+     for(int i=0; i<ica_matrix.rows; ++i){
+          for(int j=0; j<ica_matrix.cols; ++j){
+               ica_matrix.at<double>(i, j) = vector_matrix.at(i).at(j);
+          }
+     }
      return ica_matrix;
 
  }
@@ -209,6 +216,118 @@ void roi::setIcaMatrix(cv::Mat ica_matrix){
 }
 cv::Mat roi::getIcaMatrix(void){
     return this->m_ica_matrix;
+}
+
+void roi::setRemeanMatrix(cv::Mat input){
+
+   cv::Mat mean,output;
+   cv::reduce(input,mean,0,CV_REDUCE_AVG);
+   cv::Mat temp = cv::Mat::ones(input.rows, 1, CV_64FC1);
+   output=input-temp*mean;
+
+   m_remean_matrix = mean;
+}
+
+cv::Mat roi::getRemeanMatrix(void){
+    return m_remean_matrix;
+}
+
+void roi::setWhitenMatrix(cv::Mat input){
+    // need to be remean before whiten
+
+    const int N=input.rows;  //num of data
+    const int M=input.cols;  //dimention
+
+     cv::Mat cov,output;
+     cv::Mat D;
+     cv::Mat E;
+     cv::Mat temp=cv::Mat::eye(M,M,CV_64FC1);
+     cv::Mat temp2;
+
+     cov=input.t()*input/N;
+     cv::eigen(cov,D,E);
+     cv::sqrt(D,D);
+
+     for(int i=0;i<M;i++)
+     { temp.at<double>(i,i)=D.at<double>(i,0);}
+
+     temp2=E*temp.inv()*E.t()*input.t();
+
+
+    output=temp2.t();
+    m_whiten_matrix = output;
+}
+cv::Mat roi::getWhitenMatrix(void){
+    return m_whiten_matrix;
+}
+void roi::runIca(cv::Mat input,cv::Mat &output, cv::Mat &W, int snum)//output =Independent components matrix,W=Un-mixing matrix
+{
+    const  int M=input.rows;    // number of data
+            const  int N=input.cols;    // data dimension
+
+            const int maxIterations=1000;
+            const double epsilon=0.0001;
+
+            if(N<snum)
+            { snum=M;
+              printf(" Can't estimate more independent components than dimension of data ");}
+
+           cv::Mat R(snum,N,CV_64FC1);
+           cv::randn(R, cv::Scalar(0), cv::Scalar(1));
+           cv::Mat ONE=cv::Mat::ones(M,1,CV_64FC1);
+
+           for(int i=0;i<snum;++i)
+           {
+             int iteration=0;
+             cv::Mat P(1,N,CV_64FC1);
+             R.row(i).copyTo(P.row(0));
+
+              while(iteration<=maxIterations)
+              {
+                iteration++;
+                cv::Mat P2;
+                P.copyTo(P2);
+                cv::Mat temp1,temp2,temp3,temp4;
+                temp1=P*input.t();
+                cv::pow(temp1,3,temp2);
+                cv::pow(temp1,2,temp3);
+                temp3=3*temp3;
+                temp4=temp3*ONE;
+                P=temp2*input/M-temp4*P/M;
+
+                if(i!=0)
+               {
+                 cv::Mat temp5;
+                 cv::Mat wj(1,N,CV_64FC1);
+                 cv::Mat temp6=cv::Mat::zeros(1,N,CV_64FC1);
+
+                 for(int j=0;j<i;++j)
+                 {
+                    R.row(j).copyTo(wj.row(0));
+                    temp5=P*wj.t()*wj;
+                    temp6=temp6+temp5;
+
+                 }
+                 P=P-temp6;
+                }
+                 double Pnorm=cv::norm(P,4);
+                             P=P/Pnorm;
+
+                 double j1=cv::norm(P-P2,4);
+                 double j2=cv::norm(P+P2,4);
+                 if(j1<epsilon || j2<epsilon)
+                 {
+                    P.row(0).copyTo(R.row(i));
+                    break;
+                  }
+                  else if( iteration==maxIterations)
+                  {
+                      P.row(0).copyTo(R.row(i));
+                  }
+                }
+              }
+              output=R*input.t();
+    W=R;
 }
 
 //void roi::takePCA(cv::Mat matrix){
@@ -226,6 +345,10 @@ void roi::setTestSignal(std::vector<double>input_signal){
 std::vector<double> roi::getTestSignal(){
     return m_test_signal;
 }
+void roi::setIcaSignal(cv::Mat input){
+    m_ica_signal = input;
+}
+
 
 std::vector<double> roi::takeFFT(std::vector <double> signal){
     std::vector<double> output;

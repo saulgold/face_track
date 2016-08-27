@@ -53,10 +53,21 @@ public:
     std::vector<double> getRedFft();
     void setTestSignal(std::vector<double>input_signal);
     std::vector<double> getTestSignal();
+    //creates icamatrix where rgb components are rows
     cv::Mat createIcaMatrix(std::vector<double> red, std::vector<double> green, std::vector<double> blue); //create ica matrix from normalised signals
     void setIcaMatrix(cv::Mat ica_matrix);
     cv::Mat getIcaMatrix(void);
+    void setRemeanMatrix(cv::Mat input);
+    cv::Mat getRemeanMatrix(void);
+
+    void setWhitenMatrix(cv::Mat input);
+    cv::Mat getWhitenMatrix(void);
+    void runIca(cv::Mat input,cv::Mat &output, cv::Mat &W, int snum);//output =Independent components matrix,W=Un-mixing matrix
+    void setIcaSignal(cv::Mat input);
 private:
+    cv::Mat m_ica_signal;
+    cv::Mat m_whiten_matrix;
+    cv::Mat m_remean_matrix;
     cv::Mat m_blue_roi;
     cv::Mat m_green_roi;
     cv::Mat m_red_roi;

@@ -10,7 +10,6 @@
 #include "VideoFaceDetector.h"
 #include "qcustomplot.h"
 #include "roi.h"
-#include "fast_ica.h"
 using namespace cv;
 /** Global variables */
 VideoCapture m_cap(0);
@@ -60,6 +59,14 @@ void MainWindow::updateGUI(){
         skin_roi.normaliseRGB();
         cv::Mat ica_matrix = skin_roi.createIcaMatrix(skin_roi.getRedNorm(),skin_roi.getGreenNorm(),skin_roi.getBlueNorm());
         skin_roi.setIcaMatrix(ica_matrix);
+        skin_roi.setRemeanMatrix(skin_roi.getIcaMatrix());
+        skin_roi.setWhitenMatrix(skin_roi.getRemeanMatrix());
+        cv::Mat ica_out,weights;
+        //only take ica every 10th frame to speed up
+        if(skin_roi.getIteration()%10==0){
+            skin_roi.runIca(skin_roi.getWhitenMatrix(),ica_out,weights,skin_roi.getWhitenMatrix().cols);
+        }
+        //skin_roi.setIcaSignal(ica_out);
         //skin_roi.setTestSignal(signalGenerate());
         //skin_roi.takeFFT();
 
@@ -200,11 +207,17 @@ void MainWindow::on_saveDataButton_clicked()
         vector_green = skin_roi.getGreenVals();
         vector_blue = skin_roi.getBlueVals();
         std::vector<double> norm_red= skin_roi.getRedNorm();
-        output<<"red, green, blue,red norm, blue norm,green norm, test fft, test signal"<<endl;
+        std::vector<double> matr1,matr2,matr3;
+       skin_roi.getIcaMatrix().row(0).copyTo(matr1);
+       skin_roi.getIcaMatrix().row(1).copyTo(matr2);
+       skin_roi.getIcaMatrix().row(2).copyTo(matr3);
+
+        output<<"red, green, blue,red norm, blue norm,green norm, ica matrix row0,row1,row2"<<endl;
         for(size_t i=0; i<vector_red.size();i++ ){
             output << vector_red[i]<<","<<vector_green[i]<<","<<vector_blue[i]<<","
                    << norm_red[i]<<","<< skin_roi.getGreenNorm()[i]<<","<<skin_roi.getBlueNorm()[i]
-                   <<","<<skin_roi.getRedFft()[i]<<","<<skin_roi.getTestSignal()[i]<<endl;
+                   <<","<<matr1[i]<<","
+                  <<matr2[i]<<","<<matr3[i]<<endl;
         }
     }
 }
