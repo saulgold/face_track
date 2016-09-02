@@ -11,6 +11,7 @@
 #include "qcustomplot.h"
 #include "roi.h"
 using namespace cv;
+
 /** Global variables */
 VideoCapture m_cap(0);
 cv::String face_cascade_name = "haarcascade_frontalface_alt2.xml";
@@ -43,6 +44,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::updateGUI(){
 
+
     detector>>frame;
 
     cv::rectangle(frame, detector.face(), cv::Scalar(255, 0, 0));
@@ -56,15 +58,26 @@ void MainWindow::updateGUI(){
         skin_roi.update();
         graphUpdate();
         skin_roi.increaseIteration();
-        skin_roi.normaliseRGB();
-        cv::Mat ica_matrix = skin_roi.createIcaMatrix(skin_roi.getRedNorm(),skin_roi.getGreenNorm(),skin_roi.getBlueNorm());
-        skin_roi.setIcaMatrix(ica_matrix);
-        skin_roi.setRemeanMatrix(skin_roi.getIcaMatrix());
-        skin_roi.setWhitenMatrix(skin_roi.getRemeanMatrix());
+
         cv::Mat ica_out,weights;
-        //only take ica every 10th frame to speed up
-        if(skin_roi.getIteration()%10==0){
+
+        //only take ica every nuuth frame to speed up
+        int iteration =  skin_roi.getIteration();
+        if(iteration%100==0){
+            skin_roi.normaliseRGB();
+            cv::Mat ica_matrix = skin_roi.createIcaMatrix(skin_roi.getRedNorm(),skin_roi.getGreenNorm(),skin_roi.getBlueNorm());
+            skin_roi.setIcaMatrix(ica_matrix);
+            skin_roi.setRemeanMatrix(skin_roi.getIcaMatrix());
+            cv::Mat rm;
+            rm = skin_roi.getRemeanMatrix();
+            printMatrix(rm);
+            skin_roi.setWhitenMatrix(rm);
+
+            cv::Mat w = skin_roi.getWhitenMatrix();
+            printMatrix(w);
             skin_roi.runIca(skin_roi.getWhitenMatrix(),ica_out,weights,skin_roi.getWhitenMatrix().cols);
+
+            skin_roi.setIcaSignal(ica_out);
         }
         //skin_roi.setIcaSignal(ica_out);
         //skin_roi.setTestSignal(signalGenerate());
@@ -75,6 +88,7 @@ void MainWindow::updateGUI(){
 
     ui->webcam_label->setPixmap(convertOpenCVMatToQtQPixmap(frame));
     ui->skinLabel->setPixmap(convertOpenCVMatToQtQPixmap2(skin_roi.getGreenRoi()));
+
 }
 
 MainWindow::~MainWindow()
@@ -133,7 +147,7 @@ void MainWindow::printMatrix(cv::Mat mat){
                 line.append(QString("    "));
             }
             else if(mat.channels() ==1){
-                line.append( QString::number(mat.at<uchar>(j,i)));
+                line.append( QString::number(mat.at<double>(j,i)));
 
             }
             else{qDebug()<<"no channels in matrix";}
@@ -207,17 +221,23 @@ void MainWindow::on_saveDataButton_clicked()
         vector_green = skin_roi.getGreenVals();
         vector_blue = skin_roi.getBlueVals();
         std::vector<double> norm_red= skin_roi.getRedNorm();
-        std::vector<double> matr1,matr2,matr3;
+        std::vector<double> matr1,matr2,matr3,icaout1,icaout2,icaout3;
        skin_roi.getIcaMatrix().row(0).copyTo(matr1);
        skin_roi.getIcaMatrix().row(1).copyTo(matr2);
        skin_roi.getIcaMatrix().row(2).copyTo(matr3);
+       cv::Mat icamat = skin_roi.getIcaSignal();
+       icaout1= icamat.col(0);
+       icaout2 =icamat.col(1);
+       icaout3= icamat.col(2);
 
-        output<<"red, green, blue,red norm, blue norm,green norm, ica matrix row0,row1,row2"<<endl;
+        output<<"red, green, blue,red norm, blue norm,green norm, ica matrix row0,row1,row2,"
+                " ica out row0, row1, row2"<<endl;
         for(size_t i=0; i<vector_red.size();i++ ){
             output << vector_red[i]<<","<<vector_green[i]<<","<<vector_blue[i]<<","
                    << norm_red[i]<<","<< skin_roi.getGreenNorm()[i]<<","<<skin_roi.getBlueNorm()[i]
                    <<","<<matr1[i]<<","
-                  <<matr2[i]<<","<<matr3[i]<<endl;
+                  <<matr2[i]<<","<<matr3[i]
+                    <<icaout1[i]<<","<<icaout2[i]<<","<<icaout3[i]<<endl;
         }
     }
 }

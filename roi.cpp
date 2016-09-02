@@ -133,7 +133,6 @@ void roi::updateVals2(){
         m_green_vals.push_back(m_green_mean[1]);
         m_red_vals.push_back(m_red_mean[2]);
         m_iterator_vals.push_back(m_iteration);
-        qDebug()<<m_red_vals;
     }
 
 }
@@ -225,7 +224,7 @@ void roi::setRemeanMatrix(cv::Mat input){
    cv::Mat temp = cv::Mat::ones(input.rows, 1, CV_64FC1);
    output=input-temp*mean;
 
-   m_remean_matrix = mean;
+   m_remean_matrix = output;
 }
 
 cv::Mat roi::getRemeanMatrix(void){
@@ -234,6 +233,7 @@ cv::Mat roi::getRemeanMatrix(void){
 
 void roi::setWhitenMatrix(cv::Mat input){
     // need to be remean before whiten
+    qDebug()<<printMatTest(input);
 
     const int N=input.rows;  //num of data
     const int M=input.cols;  //dimention
@@ -245,16 +245,29 @@ void roi::setWhitenMatrix(cv::Mat input){
      cv::Mat temp2;
 
      cov=input.t()*input/N;
+     qDebug()<<printMatTest(cov);
      cv::eigen(cov,D,E);
      cv::sqrt(D,D);
+     qDebug()<<printMatTest(D);
 
      for(int i=0;i<M;i++)
      { temp.at<double>(i,i)=D.at<double>(i,0);}
 
+     qDebug()<<printMatTest(temp);
+     qDebug()<<printMatTest(E);
+     qDebug()<<printMatTest(input);
+     qDebug()<<printMatTest(temp.inv());
+
+
+//somethong wrong here, .inv gives nan - try normalising first
+     qDebug()<<"determinate"<<cv::determinant(temp);
      temp2=E*temp.inv()*E.t()*input.t();
 
+     qDebug()<<printMatTest(temp2);
 
     output=temp2.t();
+    qDebug()<<printMatTest(output);
+
     m_whiten_matrix = output;
 }
 cv::Mat roi::getWhitenMatrix(void){
@@ -262,10 +275,13 @@ cv::Mat roi::getWhitenMatrix(void){
 }
 void roi::runIca(cv::Mat input,cv::Mat &output, cv::Mat &W, int snum)//output =Independent components matrix,W=Un-mixing matrix
 {
+    omp_set_dynamic(0);
+    omp_set_num_threads(4);
+   qDebug()<< printMatTest(input);
     const  int M=input.rows;    // number of data
             const  int N=input.cols;    // data dimension
 
-            const int maxIterations=1000;
+            const int maxIterations=10;
             const double epsilon=0.0001;
 
             if(N<snum)
@@ -278,12 +294,14 @@ void roi::runIca(cv::Mat input,cv::Mat &output, cv::Mat &W, int snum)//output =I
 
            for(int i=0;i<snum;++i)
            {
+             qDebug()<<i;
              int iteration=0;
              cv::Mat P(1,N,CV_64FC1);
              R.row(i).copyTo(P.row(0));
 
               while(iteration<=maxIterations)
               {
+                //qDebug()<<iteration;
                 iteration++;
                 cv::Mat P2;
                 P.copyTo(P2);
@@ -318,14 +336,37 @@ void roi::runIca(cv::Mat input,cv::Mat &output, cv::Mat &W, int snum)//output =I
                  if(j1<epsilon || j2<epsilon)
                  {
                     P.row(0).copyTo(R.row(i));
+                    std::vector<double> v;
+                    QString s;
+                    QChar c;
+                    R.row(0).copyTo(v);
+                    for (int i=0; i < v.size();i++){
+                        s.push_back(QString::number(v[i]));
+
+                        s.push_back(", ");
+                    }
+                    qDebug()<<s;
+
                     break;
                   }
                   else if( iteration==maxIterations)
                   {
                       P.row(0).copyTo(R.row(i));
+                      std::vector<double> v;
+                      QString s;
+                      QChar c;
+                      R.row(0).copyTo(v);
+                      for (int i=0; i < v.size();i++){
+                          s.push_back(QString::number(v[i]));
+
+                          s.push_back(", ");
+                      }
+                      qDebug()<<s;
+
                   }
                 }
-              }
+
+}
               output=R*input.t();
     W=R;
 }
@@ -348,7 +389,9 @@ std::vector<double> roi::getTestSignal(){
 void roi::setIcaSignal(cv::Mat input){
     m_ica_signal = input;
 }
-
+cv::Mat roi::getIcaSignal(void){
+    return m_ica_signal;
+}
 
 std::vector<double> roi::takeFFT(std::vector <double> signal){
     std::vector<double> output;
@@ -379,4 +422,16 @@ void roi::update(){
     this->setRgbRois();
     this->updateMeans();
     this->updateVals2();
+}
+
+QString roi::printMatTest(cv::Mat input){
+    std::vector<double> v;
+    QString s;
+    input.row(0).copyTo(v);
+    for (int i=0; i < v.size();i++){
+        s.push_back(QString::number(v[i]));
+
+        s.push_back(", ");
+    }
+    return s;
 }

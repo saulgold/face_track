@@ -93,7 +93,7 @@ void Fft::transformRadix2(vector<double> &real, vector<double> &imag) {
         }
     }
 
-    // Cooley-Tukey decimation-in-time radix-2 FFT
+    // Cooley-Turkey decimation-in-time radix-2 FFT
     for (size_t size = 2; size <= n; size *= 2) {
         size_t halfsize = size / 2;
         size_t tablestep = n / size;

@@ -64,6 +64,10 @@ public:
     cv::Mat getWhitenMatrix(void);
     void runIca(cv::Mat input,cv::Mat &output, cv::Mat &W, int snum);//output =Independent components matrix,W=Un-mixing matrix
     void setIcaSignal(cv::Mat input);
+    cv::Mat getIcaSignal(void);
+    QString printMatTest(cv::Mat input);
+
+
 private:
     cv::Mat m_ica_signal;
     cv::Mat m_whiten_matrix;

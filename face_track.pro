@@ -11,6 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 TARGET = face_track
 TEMPLATE = app
 
+QMAKE_CXXFLAGS += -openmp -arch:AVX -D "_CRT_SECURE_NO_WARNINGS"
 #QMAKE_LFLAGS +=/STACK:64000000
 
 SOURCES += main.cpp\

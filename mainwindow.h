@@ -42,9 +42,9 @@
 #include <ctime>
 #include <iomanip>
 #include <iostream>
-
+#include <omp.h>
 #include "fft.h"
-#define FRAME_SIZE 450
+#define FRAME_SIZE 200
 
 namespace Ui {
 class MainWindow;
