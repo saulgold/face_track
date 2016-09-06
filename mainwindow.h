@@ -44,7 +44,7 @@
 #include <iostream>
 #include <omp.h>
 #include "fft.h"
-#define FRAME_SIZE 200
+#define FRAME_SIZE 400
 
 namespace Ui {
 class MainWindow;

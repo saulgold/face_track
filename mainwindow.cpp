@@ -10,9 +10,15 @@
 #include "VideoFaceDetector.h"
 #include "qcustomplot.h"
 #include "roi.h"
+
+
 using namespace cv;
 
+
 /** Global variables */
+
+
+std::vector<double> g_fft;
 VideoCapture m_cap(0);
 cv::String face_cascade_name = "haarcascade_frontalface_alt2.xml";
 cv::String eyes_cascade_name = "haarcascade_eye.xml";
@@ -63,9 +69,11 @@ void MainWindow::updateGUI(){
 
         //only take ica every nuuth frame to speed up
         int iteration =  skin_roi.getIteration();
-        if(iteration%100==0){
+        int frame_rate = FRAME_SIZE;
+        if(iteration%frame_rate==0){
             skin_roi.normaliseRGB();
-            cv::Mat ica_matrix = skin_roi.createIcaMatrix(skin_roi.getRedNorm(),skin_roi.getGreenNorm(),skin_roi.getBlueNorm());
+            cv::Mat ica_matrix = skin_roi.createIcaMatrix(
+                        skin_roi.getRedVals().toStdVector(),skin_roi.getGreenVals().toStdVector(),skin_roi.getBlueVals().toStdVector());
             skin_roi.setIcaMatrix(ica_matrix);
             skin_roi.setRemeanMatrix(skin_roi.getIcaMatrix());
             cv::Mat rm;
@@ -74,10 +82,18 @@ void MainWindow::updateGUI(){
             skin_roi.setWhitenMatrix(rm);
 
             cv::Mat w = skin_roi.getWhitenMatrix();
-            printMatrix(w);
-            skin_roi.runIca(skin_roi.getWhitenMatrix(),ica_out,weights,skin_roi.getWhitenMatrix().cols);
 
+            skin_roi.runIca(w,ica_out,weights,w.cols);
+            printMatrix(ica_out);
             skin_roi.setIcaSignal(ica_out);
+
+            std::vector<double> fft1,fft2,fft3;
+            //ica_out = ica_out.t();
+           ica_out.row(0).copyTo(fft1);
+           ica_out.row(1).copyTo(fft2);
+           ica_out.row(2).copyTo(fft3);
+
+          g_fft=skin_roi.takeFFT(fft2);
         }
         //skin_roi.setIcaSignal(ica_out);
         //skin_roi.setTestSignal(signalGenerate());
@@ -225,19 +241,19 @@ void MainWindow::on_saveDataButton_clicked()
        skin_roi.getIcaMatrix().row(0).copyTo(matr1);
        skin_roi.getIcaMatrix().row(1).copyTo(matr2);
        skin_roi.getIcaMatrix().row(2).copyTo(matr3);
-       cv::Mat icamat = skin_roi.getIcaSignal();
-       icaout1= icamat.col(0);
-       icaout2 =icamat.col(1);
-       icaout3= icamat.col(2);
+       cv::Mat icamat = skin_roi.getIcaSignal().t();
+       icaout1= icamat.row(0);
+       icaout2= icamat.row(1);
+       icaout3= icamat.row(2);
 
         output<<"red, green, blue,red norm, blue norm,green norm, ica matrix row0,row1,row2,"
-                " ica out row0, row1, row2"<<endl;
+                " ica out row0, row1, row2,fft"<<endl;
         for(size_t i=0; i<vector_red.size();i++ ){
             output << vector_red[i]<<","<<vector_green[i]<<","<<vector_blue[i]<<","
                    << norm_red[i]<<","<< skin_roi.getGreenNorm()[i]<<","<<skin_roi.getBlueNorm()[i]
                    <<","<<matr1[i]<<","
-                  <<matr2[i]<<","<<matr3[i]
-                    <<icaout1[i]<<","<<icaout2[i]<<","<<icaout3[i]<<endl;
+                  <<matr2[i]<<","<<matr3[i]<<","
+                 <<icaout1[i]<<","<<icaout2[i]<<","<<icaout3[i]<<","<<g_fft[i]<<endl;
         }
     }
 }

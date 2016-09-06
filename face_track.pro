@@ -33,7 +33,8 @@ FORMS    += mainwindow.ui
 
 INCLUDEPATH += C:\\opencv2413\\build\\include \
                C:\\opencv2413\\build\\include\\opencv \
-               C:\\opencv2413\\build\\include\\opencv2
+               C:\\opencv2413\\build\\include\\opencv2 \
+
 
 CONFIG(Debug) {
 LIBS += -LC:\opencv2413\build\x86\vc12\lib \
@@ -49,6 +50,8 @@ LIBS += -LC:\opencv2413\build\x86\vc12\lib \
     -lopencv_imgproc2413d \
     -lopencv_contrib2413d \
     -lopencv_highgui2413d
+
+
 } else {
 LIBS += -LC:\opencv2413\build\x86\vc12\lib \
     -lopencv_imgproc2413 \
