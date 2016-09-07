@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     VideoFaceDetector.cpp \
     qcustomplot.cpp \
     roi.cpp \
-    fft.cpp
+    fft.cpp \
+    codetimer.cpp
 
 HEADERS  += mainwindow.h \
     VideoFaceDetector.h \
@@ -27,13 +28,17 @@ HEADERS  += mainwindow.h \
     sys_lib.h \
     qcustomplot.h \
     roi.h \
-    fft.h
+    fft.h \
+    fastica.h \
+    codetimer.h
 
 FORMS    += mainwindow.ui
 
 INCLUDEPATH += C:\\opencv2413\\build\\include \
                C:\\opencv2413\\build\\include\\opencv \
                C:\\opencv2413\\build\\include\\opencv2 \
+               C:\eigen-eigen \
+               C:\eigen-eigen\Eigen
 
 
 CONFIG(Debug) {

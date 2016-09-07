@@ -377,9 +377,7 @@ void roi::runIca(cv::Mat input,cv::Mat &output, cv::Mat &W, int snum)//output =I
 //        pca.project(hj)
 //    }
 //}
-std::vector<double> roi::getRedFft(){
-    return this->m_red_fft;
-}
+
 void roi::setTestSignal(std::vector<double>input_signal){
     m_test_signal = input_signal;
 }
@@ -418,6 +416,31 @@ std::vector<double> roi::takeFFT(std::vector <double> signal){
     //cv::dft(m_blue_vals.toStdVector(),m_blue_frequency);
 }
 
+void roi::takeFFTICA(cv::Mat ica_matrix){
+
+    std::vector<double> ica_red,ica_green,ica_blue;
+
+    ica_matrix.row(0).copyTo(ica_red);
+    ica_matrix.row(1).copyTo(ica_green);
+    ica_matrix.row(2).copyTo(ica_blue);
+
+    m_red_fft = takeFFT(ica_red);
+    m_green_fft = takeFFT(ica_green);
+    m_blue_fft = takeFFT(ica_blue);
+
+}
+std::vector<double> roi::getRedFft(){
+    return m_red_fft;
+}
+
+std::vector<double> roi::getBlueFft(){
+    return m_blue_fft;
+}
+
+std::vector<double> roi::getGreenFft(){
+    return m_green_fft;
+}
+
 void roi::update(){
     this->setRgbRois();
     this->updateMeans();
@@ -425,13 +448,45 @@ void roi::update(){
 }
 
 QString roi::printMatTest(cv::Mat input){
-    std::vector<double> v;
+    std::vector<double> v,v2,v3;
     QString s;
     input.row(0).copyTo(v);
+    input.row(1).copyTo(v2);
+    input.row(2).copyTo(v3);
+
     for (int i=0; i < v.size();i++){
         s.push_back(QString::number(v[i]));
 
         s.push_back(", ");
     }
+    s.push_back("newline");
+    for (int i=0; i < v.size();i++){
+        s.push_back(QString::number(v2[i]));
+
+        s.push_back(", ");
+    }
+    s.push_back("newline");
+    for (int i=0; i < v.size();i++){
+        s.push_back(QString::number(v3[i]));
+
+        s.push_back(", ");
+    }
     return s;
+}
+std::vector<double> roi::generateSinWave(int freq){
+    std::vector<double> output;
+    int frame_size = FRAME_SIZE;
+    for(int i=0; i<frame_size;i++){
+        output.push_back(std::sin(freq*2*3.14* i ));
+
+    }
+    return output;
+}
+
+void roi::setCodeTimer(double time){
+    m_frame_timer = time;
+}
+
+double roi::getCodeTimer(){
+    return m_frame_timer;
 }

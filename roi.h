@@ -38,7 +38,6 @@ public:
     std::vector<double> normalise(QVector<double> rgb_vals);
     void makePcaMatrix(std::vector<int> red, std::vector<int> green, std::vector<int> blue, Mat pca_matrix);
     void normaliseRGB(void);
-    std::vector<double> takeFFT(std::vector<double> signal);
 
     void update();
     QVector<double> getBlueVals();
@@ -50,7 +49,6 @@ public:
     std::vector<double> getGreenNorm();
     std::vector<double> getBlueNorm();
 
-    std::vector<double> getRedFft();
     void setTestSignal(std::vector<double>input_signal);
     std::vector<double> getTestSignal();
     //creates icamatrix where rgb components are rows
@@ -66,7 +64,16 @@ public:
     void setIcaSignal(cv::Mat input);
     cv::Mat getIcaSignal(void);
     QString printMatTest(cv::Mat input);
+    std::vector<double> takeFFT(std::vector<double> signal);
 
+    void roi::takeFFTICA(cv::Mat ica_matrix);
+    std::vector<double> getRedFft();
+    std::vector<double> getGreenFft();
+    std::vector<double> getBlueFft();
+
+    std::vector<double> roi::generateSinWave(int freq);
+    void setCodeTimer();
+    double getCodeTimer();
 
 private:
     cv::Mat m_ica_signal;
@@ -93,12 +100,20 @@ private:
 
 
     std::vector<double> m_red_fft;
+    std::vector<double> m_green_fft;
+    std::vector<double> m_blue_fft;
+
+
     std::vector<double> m_test_signal;
     cv::Mat m_red_frequency;
     cv::Mat m_green_frequency;
     cv::Mat m_blue_frequency;
 
     cv::Mat m_ica_matrix;
+
+    std::vector<double> m_sin_wave;
+
+    double m_frame_time;
 };
 
 
