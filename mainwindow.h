@@ -45,9 +45,9 @@
 #include <omp.h>
 #include "fft.h"
 #include"codetimer.h"
+#include "csvfile.h"
 
-#define FRAME_SIZE 100
-
+#define FRAME_SIZE 1024
 namespace Ui {
 class MainWindow;
 }

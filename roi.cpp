@@ -484,9 +484,48 @@ std::vector<double> roi::generateSinWave(int freq){
 }
 
 void roi::setCodeTimer(double time){
-    m_frame_timer = time;
+    m_frame_time = time;
 }
 
 double roi::getCodeTimer(){
-    return m_frame_timer;
+    return m_frame_time;
+}
+
+//returns the bin location of the maximum frequency
+double roi::findMax(std::vector<double> input){
+    int buffer =0;
+    int max = 0;
+    for(int i=0;i<input.size();i++){
+        if(input[i]>buffer){
+            buffer = input[i];
+            max = i;
+        }
+    }
+    return max;
+}
+double roi::convertToHz(double input){
+    double frame_length = FRAME_SIZE;
+    double frame_time = getCodeTimer();
+    double Fs = frame_length/(2*frame_time);
+    double output;
+    output= (input * frame_time)/frame_length;
+    return output;
+}
+
+std::vector<double> roi::createPowerSpectrum(std::vector<double> fft_vector){
+    double frame_length = FRAME_SIZE;
+    double frame_time = getCodeTimer();
+    double Fs = frame_length/(2*frame_time);
+    std::vector<double> output;
+
+    for(int i=0;i<frame_length/2;i++){
+        output.push_back( (i * frame_time)/frame_length);
+    }
+    //to pad out vector so it's the same length as othervectors
+    //this helps when saving data to file
+    for(int i= frame_length/2; i<frame_length;i++){
+        output.push_back(0);
+    }
+    m_power_spectrum = output;
+    return output;
 }

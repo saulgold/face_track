@@ -72,8 +72,12 @@ public:
     std::vector<double> getBlueFft();
 
     std::vector<double> roi::generateSinWave(int freq);
-    void setCodeTimer();
+    void setCodeTimer(double time);
     double getCodeTimer();
+    double findMax( std::vector<double> input);
+    vector<double> roi::createPowerSpectrum(std::vector<double> fft_vector);
+    double convertToHz(double input);
+
 
 private:
     cv::Mat m_ica_signal;
@@ -114,6 +118,8 @@ private:
     std::vector<double> m_sin_wave;
 
     double m_frame_time;
+    std::vector<double> m_power_spectrum;
+
 };
 
 

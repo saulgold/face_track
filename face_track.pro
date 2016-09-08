@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     qcustomplot.cpp \
     roi.cpp \
     fft.cpp \
-    codetimer.cpp
+    codetimer.cpp \
+    csvfile.cpp
 
 HEADERS  += mainwindow.h \
     VideoFaceDetector.h \
@@ -30,7 +31,8 @@ HEADERS  += mainwindow.h \
     roi.h \
     fft.h \
     fastica.h \
-    codetimer.h
+    codetimer.h \
+    csvfile.h
 
 FORMS    += mainwindow.ui
 

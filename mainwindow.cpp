@@ -13,9 +13,18 @@
 
 
 using namespace cv;
-
+//QString csv_file;
+//csv_file= QFileDialog::getSaveFileName(this,tr("new csv"),"C:/Users/saul/Documents/MSc_Thesis/");
+//QFile data (csv_file);
+//if(data.open(QFile::WriteOnly|QFile::Truncate)){
+//    QTextStream output(&data);
 
 /** Global variables */
+
+QString g_csv_file = "C:/Users/saul/Documents/MSc_Thesis/vid2.csv";
+QFile g_data(g_csv_file);
+QTextStream g_output_file(&g_data);
+
 double g_tick_frequency;
 std::vector<double>g_sinwave;
 std::vector<double> g_fft,g_fft_test;
@@ -35,6 +44,14 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    QString csv_file;
+    csv_file= QFileDialog::getSaveFileName(this,tr("new csv"),"C:/Users/saul/Documents/MSc_Thesis/");
+    QFile data (csv_file);
+    if(data.open(QFile::WriteOnly|QFile::Truncate)){
+        QTextStream output(&data);
+    }
+
+
     if(!m_cap.open(0)){
         qDebug()<<"webcam no open";
     }
@@ -50,6 +67,7 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 
 void MainWindow::updateGUI(){
+    g_output_file <<"adsfdsf,";
    g_tick_frequency = cv::getTickFrequency();
     ui->tick_freq_lcd->display(g_tick_frequency);
 
@@ -258,14 +276,19 @@ void MainWindow::on_saveDataButton_clicked()
 
        std::vector<double> bluefft = skin_roi.getBlueFft();
 
-        output<<"red, green, blue,red norm, blue norm,green norm, ica matrix row0,row1,row2,"
-                " ica out row0, row1, row2,fft green"<<","<<skin_roi.getCodeTimer()<<endl;
+
+       double maxfreq = skin_roi.findMax(greenfft);
+
+        output<<"i,red, green, blue,red norm, green norm,blue norm, ica matrix row0,row1,row2,"
+                "ica out row0, row1, row2,fft green,period,max freq"<<endl;
         for(size_t i=0; i<vector_red.size();i++ ){
-            output << vector_red[i]<<","<<vector_green[i]<<","<<vector_blue[i]<<","
+            output << i<<","<<vector_red[i]<<","<<vector_green[i]<<","<<vector_blue[i]<<","
                    << norm_red[i]<<","<< skin_roi.getGreenNorm()[i]<<","<<skin_roi.getBlueNorm()[i]
                    <<","<<matr1[i]<<","
                   <<matr2[i]<<","<<matr3[i]<<","
-                 <<icaout1[i]<<","<<icaout2[i]<<","<<icaout3[i]<<","<<greenfft[i]<<","<<g_sinwave[i]<<","<<g_fft_test[i]<<endl;
+                 <<icaout1[i]<<","<<icaout2[i]<<","<<icaout3[i]<<","<<greenfft[i]
+                   <<","<<skin_roi.getCodeTimer()<<","<<maxfreq<<endl;
+                   //","<<g_sinwave[i]<<","<<g_fft_test[i]<<endl;
         }
     }
 }
