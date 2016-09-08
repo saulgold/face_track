@@ -44,12 +44,14 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    QString csv_file;
-    csv_file= QFileDialog::getSaveFileName(this,tr("new csv"),"C:/Users/saul/Documents/MSc_Thesis/");
-    QFile data (csv_file);
-    if(data.open(QFile::WriteOnly|QFile::Truncate)){
-        QTextStream output(&data);
-    }
+    g_data.open(QFile::WriteOnly|QFile::Truncate);
+
+//    QString csv_file;
+//    csv_file= QFileDialog::getSaveFileName(this,tr("new csv"),"C:/Users/saul/Documents/MSc_Thesis/");
+//    QFile data (csv_file);
+//    if(data.open(QFile::WriteOnly|QFile::Truncate)){
+//        QTextStream output(&data);
+//    }
 
 
     if(!m_cap.open(0)){
@@ -67,7 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 
 void MainWindow::updateGUI(){
-    g_output_file <<"adsfdsf,";
+
    g_tick_frequency = cv::getTickFrequency();
     ui->tick_freq_lcd->display(g_tick_frequency);
 
@@ -130,6 +132,9 @@ void MainWindow::updateGUI(){
 
     ui->webcam_label->setPixmap(convertOpenCVMatToQtQPixmap(frame));
     ui->skinLabel->setPixmap(convertOpenCVMatToQtQPixmap2(skin_roi.getGreenRoi()));
+
+        QTextStream output(&g_data);
+        output<<"testeee,";
 
 }
 
