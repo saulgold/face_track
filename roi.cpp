@@ -233,7 +233,7 @@ cv::Mat roi::getRemeanMatrix(void){
 
 void roi::setWhitenMatrix(cv::Mat input){
     // need to be remean before whiten
-    qDebug()<<printMatTest(input);
+   // qDebug()<<printMatTest(input);
 
     const int N=input.rows;  //num of data
     const int M=input.cols;  //dimention
@@ -245,28 +245,28 @@ void roi::setWhitenMatrix(cv::Mat input){
      cv::Mat temp2;
 
      cov=input.t()*input/N;
-     qDebug()<<printMatTest(cov);
+    // qDebug()<<printMatTest(cov);
      cv::eigen(cov,D,E);
      cv::sqrt(D,D);
-     qDebug()<<printMatTest(D);
+     //qDebug()<<printMatTest(D);
 
      for(int i=0;i<M;i++)
      { temp.at<double>(i,i)=D.at<double>(i,0);}
 
-     qDebug()<<printMatTest(temp);
-     qDebug()<<printMatTest(E);
-     qDebug()<<printMatTest(input);
-     qDebug()<<printMatTest(temp.inv());
+//     qDebug()<<printMatTest(temp);
+//     qDebug()<<printMatTest(E);
+//     qDebug()<<printMatTest(input);
+//     qDebug()<<printMatTest(temp.inv());
 
 
 //somethong wrong here, .inv gives nan - try normalising first
-     qDebug()<<"determinate"<<cv::determinant(temp);
+    // qDebug()<<"determinate"<<cv::determinant(temp);
      temp2=E*temp.inv()*E.t()*input.t();
 
-     qDebug()<<printMatTest(temp2);
+    // qDebug()<<printMatTest(temp2);
 
     output=temp2.t();
-    qDebug()<<printMatTest(output);
+   // qDebug()<<printMatTest(output);
 
     m_whiten_matrix = output;
 }
@@ -277,7 +277,7 @@ void roi::runIca(cv::Mat input,cv::Mat &output, cv::Mat &W, int snum)//output =I
 {
     omp_set_dynamic(0);
     omp_set_num_threads(4);
-   qDebug()<< printMatTest(input);
+  // qDebug()<< printMatTest(input);
     const  int M=input.rows;    // number of data
             const  int N=input.cols;    // data dimension
 
@@ -294,7 +294,7 @@ void roi::runIca(cv::Mat input,cv::Mat &output, cv::Mat &W, int snum)//output =I
 
            for(int i=0;i<snum;++i)
            {
-             qDebug()<<i;
+            // qDebug()<<i;
              int iteration=0;
              cv::Mat P(1,N,CV_64FC1);
              R.row(i).copyTo(P.row(0));
@@ -345,7 +345,7 @@ void roi::runIca(cv::Mat input,cv::Mat &output, cv::Mat &W, int snum)//output =I
 
                         s.push_back(", ");
                     }
-                    qDebug()<<s;
+                   // qDebug()<<s;
 
                     break;
                   }
@@ -361,7 +361,7 @@ void roi::runIca(cv::Mat input,cv::Mat &output, cv::Mat &W, int snum)//output =I
 
                           s.push_back(", ");
                       }
-                      qDebug()<<s;
+                    //  qDebug()<<s;
 
                   }
                 }

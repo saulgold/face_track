@@ -20,12 +20,16 @@ using namespace cv;
 //    QTextStream output(&data);
 
 /** Global variables */
+int g_play_flag;
+std::vector<double> g_times;
+int g_time_i;
 
-QString g_csv_file = "C:/Users/saul/Documents/MSc_Thesis/vid2.csv";
+QString g_csv_file = "C:/Users/saul/Documents/MSc_Thesis/vid2test2.csv";
 QFile g_data(g_csv_file);
 QTextStream g_output_file(&g_data);
 
 double g_tick_frequency;
+
 std::vector<double>g_sinwave;
 std::vector<double> g_fft,g_fft_test;
 VideoCapture m_cap(0);
@@ -45,6 +49,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     g_data.open(QFile::WriteOnly|QFile::Truncate);
+    g_times.push_back(0);
+    g_time_i = 1;
+
 
 //    QString csv_file;
 //    csv_file= QFileDialog::getSaveFileName(this,tr("new csv"),"C:/Users/saul/Documents/MSc_Thesis/");
@@ -70,8 +77,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::updateGUI(){
 
+    if(g_play_flag==1){
+    int time = m_cap.get(CV_CAP_PROP_POS_MSEC);
    g_tick_frequency = cv::getTickFrequency();
-    ui->tick_freq_lcd->display(g_tick_frequency);
+    //ui->tick_freq_lcd->display(g_tick_frequency);
 
     detector>>frame;
 
@@ -95,6 +104,7 @@ void MainWindow::updateGUI(){
         int iteration =  skin_roi.getIteration();
         int frame_rate = FRAME_SIZE;
         if(iteration%frame_rate==0){
+            g_times.push_back(double(time));
             code_timer.endTimer();
             skin_roi.setCodeTimer(code_timer.getTime());
             skin_roi.normaliseRGB();
@@ -115,6 +125,37 @@ void MainWindow::updateGUI(){
             skin_roi.takeFFTICA(ica_out);
             g_sinwave = skin_roi.generateSinWave(100);
             g_fft_test = skin_roi.takeFFT(g_sinwave);
+
+            QTextStream output(&g_data);
+            std::vector<double> fft_green = skin_roi.getGreenFft();
+            std::vector<double> ica_green_signal;
+            ica_out.row(1).copyTo(ica_green_signal);
+
+            //make a vector of frequency for the power distribution
+            std::vector<double> freq;
+            double framesize = FRAME_SIZE;
+            double frame_time = (g_times[g_time_i]-g_times[g_time_i-1])/1000;
+
+            for(double i =1;i<framesize/2;i++){
+                freq.push_back(i* 60/(frame_time));
+            }
+            //find max frequency i.e heart rate
+            double maxf=0;
+            double bufferf =0;
+            int pos=0;
+            for(int i =0;i<framesize/2;i++){
+               if((fft_green[i]>bufferf)&&(freq[i]>30)&&(freq[i]<120)){
+                  bufferf = fft_green[i];
+                   maxf = freq[i];
+                   pos=i;
+               }
+            }
+            output<<maxf<<","<<pos<<","<<time<<endl;
+            g_time_i++;
+
+            for(int i=0; i<fft_green.size();i++){
+                output<<ica_green_signal[i]<<","<<fft_green[i]<<","<<time<< endl;
+            }
 //            std::vector<double> fft1,fft2,fft3;
             //ica_out = ica_out.t();
 //           ica_out.row(0).copyTo(fft1);
@@ -130,12 +171,10 @@ void MainWindow::updateGUI(){
         //qDebug()<<skin_roi.getBlueRoi();
     }
 
-    ui->webcam_label->setPixmap(convertOpenCVMatToQtQPixmap(frame));
-    ui->skinLabel->setPixmap(convertOpenCVMatToQtQPixmap2(skin_roi.getGreenRoi()));
+    //ui->webcam_label->setPixmap(convertOpenCVMatToQtQPixmap(frame));
+   // ui->skinLabel->setPixmap(convertOpenCVMatToQtQPixmap2(skin_roi.getGreenRoi()));
 
-        QTextStream output(&g_data);
-        output<<"testeee,";
-
+}
 }
 
 MainWindow::~MainWindow()
@@ -324,4 +363,14 @@ vector<double> MainWindow::signalGenerate(void){
 
 void setTimer(void){
 
+}
+
+void MainWindow::on_playButton_clicked()
+{
+    if(g_play_flag==0){
+        g_play_flag = 1;
+    }
+    else if (g_play_flag==1){
+        g_play_flag=0;
+    }
 }

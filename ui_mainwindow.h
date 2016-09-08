@@ -39,6 +39,7 @@ public:
     QLabel *label;
     QLabel *tick_label;
     QLCDNumber *tick_freq_lcd;
+    QPushButton *playButton;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -130,6 +131,9 @@ public:
         palette.setBrush(QPalette::Disabled, QPalette::ToolTipBase, brush2);
         palette.setBrush(QPalette::Disabled, QPalette::ToolTipText, brush1);
         tick_freq_lcd->setPalette(palette);
+        playButton = new QPushButton(centralWidget);
+        playButton->setObjectName(QStringLiteral("playButton"));
+        playButton->setGeometry(QRect(720, 80, 80, 21));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -156,6 +160,7 @@ public:
         saveDataButton->setText(QApplication::translate("MainWindow", "save data", 0));
         label->setText(QApplication::translate("MainWindow", "Heart Rate/BPM", 0));
         tick_label->setText(QApplication::translate("MainWindow", "tick frequency", 0));
+        playButton->setText(QApplication::translate("MainWindow", "PLAY", 0));
     } // retranslateUi
 
 };

@@ -66,6 +66,8 @@ private slots:
 
     void on_saveDataButton_clicked();
 
+    void on_playButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 
