@@ -9,10 +9,14 @@ public:
     ~roi();
 
     cv::Mat roi_mat;
-
-
-
+    void setFacePosition(cv::Point p){m_face_position = p;}
+    cv::Point getFacePosition(){return m_face_position;}
+    void setFaceWidth(double w){m_face_width = w;}
+    double getFaceWidth(){return m_face_width;}
     void setRoiMat(cv::Mat roiMat);
+    void setStaticRoi(cv::Mat frame);
+    cv::Rect getRect(){return m_roi_rect;}
+
     void setRgbRois();
     void updateMeans();
     void updateVals();
@@ -77,7 +81,8 @@ public:
     double findMax( std::vector<double> input);
     vector<double> roi::createPowerSpectrum(std::vector<double> fft_vector);
     double convertToHz(double input);
-
+    void findMaxFft(std::vector<double> input);
+    double getBpm();
 
 private:
     cv::Mat m_ica_signal;
@@ -119,6 +124,11 @@ private:
 
     double m_frame_time;
     std::vector<double> m_power_spectrum;
+    double m_bpm;
+
+   cv::Point m_face_position;
+   double m_face_width;
+   cv::Rect m_roi_rect;
 
 };
 

@@ -283,13 +283,22 @@ cv::Point VideoFaceDetector::operator>>(cv::Mat &frame)
 cv::Mat VideoFaceDetector::ROIframe(cv::Mat frame)
 {
 
-    cv::Rect middleFaceRect = cv::Rect(this->facePosition().x-10,this->facePosition().y-10,20,20);
-    m_ROI = cv::Mat(frame,middleFaceRect);
-    cv::rectangle(frame,middleFaceRect,cv::Scalar(0,0,255),1,8,0);
+    //cv::Rect middleFaceRect = cv::Rect(this->facePosition().x-10,this->facePosition().y-10,20,20);
+    double face_width = face().width;
+    cv::Rect cheek_rect = cv::Rect(facePosition().x-10+(face_width/4.0),facePosition().y,20,20);
+
+    m_ROI = cv::Mat(frame,cheek_rect);
+    cv::rectangle(frame,cheek_rect,cv::Scalar(0,0,255),1,8,0);
 
     return m_ROI;
 
 }
+
+//cv::Mat VideoFaceDetector::getStaticRoi(cv::Mat frame){
+//    cv::Rect rect = cv::Rect(g_face_position.x-10+(g_face_width/4.0),g_face_position.y,20,20);
+//    m_ROI = cv::Mat(frame,rect);
+//    return m_ROI;
+//}
 
 void VideoFaceDetector::getBGR(cv::Mat frame,cv::Mat &blue,cv::Mat &green,cv::Mat &red)
 {

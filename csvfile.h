@@ -8,8 +8,10 @@ class csvfile
 public:
     csvfile(QString filename);
     ~csvfile();
-    void setFileName(QString fn);
-    void sendToFile(QTextStream send);
+    QString getFileName();
+    QFile init();
+    void csvfile::setFile(QString filename);
+
 private:
     QString m_file_name;
     QFile m_data;

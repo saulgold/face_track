@@ -12,7 +12,15 @@ roi::~roi(){
 void roi::setRoiMat(Mat roiMat){
     roi_mat = roiMat;
 }
+void roi::setStaticRoi(cv::Mat frame){
+    cv::Point face_position = getFacePosition();
+    double face_width = getFaceWidth();
 
+    cv::Rect rect = cv::Rect(face_position.x-10+(face_width/4.0),face_position.y,20,20);
+    m_roi_rect = rect;
+    roi_mat = cv::Mat(frame,rect);
+
+}
 cv::Mat roi::getRoiMat()
 {
     return roi_mat;
@@ -277,12 +285,12 @@ void roi::runIca(cv::Mat input,cv::Mat &output, cv::Mat &W, int snum)//output =I
 {
     omp_set_dynamic(0);
     omp_set_num_threads(4);
-  // qDebug()<< printMatTest(input);
+   //qDebug()<< printMatTest(input);
     const  int M=input.rows;    // number of data
             const  int N=input.cols;    // data dimension
 
-            const int maxIterations=10;
-            const double epsilon=0.0001;
+            const int maxIterations=100;
+            const double epsilon=0.001;
 
             if(N<snum)
             { snum=M;
@@ -294,7 +302,7 @@ void roi::runIca(cv::Mat input,cv::Mat &output, cv::Mat &W, int snum)//output =I
 
            for(int i=0;i<snum;++i)
            {
-            // qDebug()<<i;
+             qDebug()<<i;
              int iteration=0;
              cv::Mat P(1,N,CV_64FC1);
              R.row(i).copyTo(P.row(0));
@@ -345,7 +353,7 @@ void roi::runIca(cv::Mat input,cv::Mat &output, cv::Mat &W, int snum)//output =I
 
                         s.push_back(", ");
                     }
-                   // qDebug()<<s;
+                    //qDebug()<<s;
 
                     break;
                   }
@@ -361,7 +369,7 @@ void roi::runIca(cv::Mat input,cv::Mat &output, cv::Mat &W, int snum)//output =I
 
                           s.push_back(", ");
                       }
-                    //  qDebug()<<s;
+                     //qDebug()<<s;
 
                   }
                 }
@@ -529,3 +537,32 @@ std::vector<double> roi::createPowerSpectrum(std::vector<double> fft_vector){
     m_power_spectrum = output;
     return output;
 }
+
+void roi::findMaxFft(std::vector<double> input){
+    double maxf=0;
+    double frame_size = FRAME_SIZE;
+    double bufferf =0;
+    int pos=0;
+    std::vector<double> freq;
+    for(double i =1;i<input.size()/2;i++){
+        freq.push_back((i* 60*61)/(frame_size));
+    }
+
+    for(int i =0;i<input.size()/2;i++){
+       if((input[i]>bufferf)&&(freq[i]>30)&&(freq[i]<120)){
+          bufferf = input[i];
+           maxf = freq[i];
+           pos=i;
+       }
+    }
+
+    m_bpm = maxf;
+}
+
+double roi::getBpm(){
+    return m_bpm;
+}
+
+
+
+

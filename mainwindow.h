@@ -47,7 +47,9 @@
 #include"codetimer.h"
 #include "csvfile.h"
 
-#define FRAME_SIZE 1024
+#define FRAME_SIZE 2056
+
+
 namespace Ui {
 class MainWindow;
 }

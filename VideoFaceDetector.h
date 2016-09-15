@@ -3,6 +3,7 @@
 #include <opencv2\core.hpp>
 #include <opencv2\highgui\highgui.hpp>
 #include <opencv2\objdetect\objdetect.hpp>
+#include"mainwindow.h"
 
 class VideoFaceDetector
 {
@@ -24,7 +25,7 @@ public:
     double                  templateMatchingMaxDuration() const;
     cv::Mat                 ROIframe(cv::Mat frame);
     void                    getBGR(cv::Mat frame,cv::Mat &blue,cv::Mat &green,cv::Mat &red);
-private:
+//    cv::Mat                 getStaticRoi(cv::Mat frame);
     static const double     TICK_FREQUENCY;
 
     cv::VideoCapture*       m_videoCapture = NULL;

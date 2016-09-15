@@ -264,6 +264,7 @@ void MainWindow::updateGUI(){
             }
         }
         else{
+            m_cap
             m_cap.release();
             m_cap.open("c/a/a.avi");
             //m_cap = cv::VideoCapture('C:\a\a.avi');
