@@ -21,6 +21,7 @@ using namespace cv;
 
 /** Global variables */
 int g_play_flag;
+int g_video=1;
 std::vector<double> g_times;
 int g_time_i;
 double g_frame_count=0;
@@ -88,7 +89,8 @@ MainWindow::MainWindow(QWidget *parent) :
 void MainWindow::updateGUI(){
 
     if(g_play_flag==1){
-        if(g_frame_count!=g_current_frame){
+        qDebug()<<g_frame_count<<", "<<g_current_frame;
+        if((g_frame_count-5)!=g_current_frame){
 
 
             if(m_cap.isOpened()){
@@ -107,7 +109,7 @@ void MainWindow::updateGUI(){
                 cv::rectangle(frame, static_roi.getRect(), cv::Scalar(255, 0, 0));
 
                 cv::circle(frame, detector.facePosition(), 30, cv::Scalar(0, 255, 0));
-
+                if(!frame.empty()){
                 if(detector.face().area()!=0){
 
 
@@ -120,6 +122,7 @@ void MainWindow::updateGUI(){
                     static_roi.setStaticRoi(frame);
 
                 }
+    }
 
                 if(!skin_roi.getRoiMat().empty()){
 
@@ -189,7 +192,7 @@ void MainWindow::updateGUI(){
                         QTextStream output2(&g_data2);
 
 
-                        output<<skin_roi.getBpm()<<","<<static_roi.getBpm()<<
+                        output<<g_video<<","skin_roi.getBpm()<<","<<static_roi.getBpm()<<
                                 ","<<m_cap.get(CV_CAP_PROP_POS_MSEC)<<endl;
 
                         std::vector<double> fft_green = skin_roi.getGreenFft();
@@ -264,9 +267,16 @@ void MainWindow::updateGUI(){
             }
         }
         else{
+
             m_cap.release();
-            m_cap.open("c/a/a.avi");
-            //m_cap = cv::VideoCapture('C:\a\a.avi');
+            string filename="C:/a/";
+            filename+= std::to_string(g_video);
+            filename+=".avi";
+
+            m_cap = cv::VideoCapture(filename);
+            g_frame_count=m_cap.get(CV_CAP_PROP_FRAME_COUNT );
+            g_current_frame = m_cap.get(CV_CAP_PROP_POS_FRAMES);
+            g_video++;
 
         }
     }
@@ -310,7 +320,7 @@ QPixmap MainWindow::convertOpenCVMatToQtQPixmap2(cv::Mat mat) {
 void MainWindow::on_selectFileButton_clicked()
 {
     m_filename = QFileDialog::getOpenFileName(this,
-                                              tr("Open Image"), "C:/Users/saul/Documents/MSc_Thesis/hci-tagging-database_download_2016-07-22_11-16-38/Sessions/", tr("video Files (*.mpg *.avi)"));
+                                              tr("Open Image"), "C:/Users/saul/Documents/MSc_Thesis/hci-tagging-database_download_2016-07-22_11-16-38/Sessions/", tr("video Files (*.mpg *.avi *.mp4)"));
     m_cap = cv::VideoCapture(m_filename.toStdString());
 
 }
