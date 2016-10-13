@@ -46,6 +46,7 @@ public:
     QLabel *label_4;
     QLCDNumber *lcd_time;
     QLabel *label_5;
+    QPushButton *pushButton;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -158,6 +159,9 @@ public:
         label_5 = new QLabel(centralWidget);
         label_5->setObjectName(QStringLiteral("label_5"));
         label_5->setGeometry(QRect(760, 380, 47, 13));
+        pushButton = new QPushButton(centralWidget);
+        pushButton->setObjectName(QStringLiteral("pushButton"));
+        pushButton->setGeometry(QRect(730, 410, 80, 21));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -189,6 +193,7 @@ public:
         label_3->setText(QApplication::translate("MainWindow", "tracked", 0));
         label_4->setText(QApplication::translate("MainWindow", "static", 0));
         label_5->setText(QApplication::translate("MainWindow", "time ms", 0));
+        pushButton->setText(QApplication::translate("MainWindow", "Close", 0));
     } // retranslateUi
 
 };

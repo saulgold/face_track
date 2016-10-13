@@ -47,7 +47,7 @@
 #include"codetimer.h"
 #include "csvfile.h"
 
-#define FRAME_SIZE 2056
+#define FRAME_SIZE 512
 
 
 namespace Ui {
@@ -69,6 +69,8 @@ private slots:
     void on_saveDataButton_clicked();
 
     void on_playButton_clicked();
+
+    void on_pushButton_clicked();
 
 private:
     Ui::MainWindow *ui;

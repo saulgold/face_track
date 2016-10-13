@@ -21,16 +21,16 @@ using namespace cv;
 
 /** Global variables */
 int g_play_flag;
-int g_video=1;
+int g_video=0;
 std::vector<double> g_times;
 int g_time_i;
 double g_frame_count=0;
 double g_current_frame=1;
-QString g_csv_file = "C:/Users/saul/Documents/MSc_Thesis/results/vid2teststatic1.csv";
+QString g_csv_file = "C:/Users/saul/Documents/MSc_Thesis/results/vid2teststatic1auto1.csv";
 QFile g_data(g_csv_file);
 QTextStream g_output_file(&g_data);
 
-QString g_csv_file2 = "C:/Users/saul/Documents/MSc_Thesis/results/vid2testalldatastatic1.csv";
+QString g_csv_file2 = "C:/Users/saul/Documents/MSc_Thesis/results/icatestvid4.csv";
 QFile g_data2(g_csv_file2);
 QTextStream g_output_file2(&g_data2);
 
@@ -89,7 +89,7 @@ MainWindow::MainWindow(QWidget *parent) :
 void MainWindow::updateGUI(){
 
     if(g_play_flag==1){
-        qDebug()<<g_frame_count<<", "<<g_current_frame;
+        //qDebug()<<g_frame_count<<", "<<g_current_frame;
         if((g_frame_count-5)!=g_current_frame){
 
 
@@ -106,20 +106,20 @@ void MainWindow::updateGUI(){
                 detector>>frame;
 
                 cv::rectangle(frame, detector.face(), cv::Scalar(255, 0, 0));
-                cv::rectangle(frame, static_roi.getRect(), cv::Scalar(255, 0, 0));
+                //cv::rectangle(frame, static_roi.getRect(), cv::Scalar(255, 0, 0));
 
                 cv::circle(frame, detector.facePosition(), 30, cv::Scalar(0, 255, 0));
                 if(!frame.empty()){
                 if(detector.face().area()!=0){
 
 
-                    if(static_flag==0){
-                        static_roi.setFacePosition(detector.facePosition());
-                        static_roi.setFaceWidth(detector.face().width);
-                        static_flag=1;
-                    }
+//                    if(static_flag==0){
+//                        static_roi.setFacePosition(detector.facePosition());
+//                        static_roi.setFaceWidth(detector.face().width);
+//                        static_flag=1;
+//                    }
                     skin_roi.setRoiMat(detector.ROIframe(frame));
-                    static_roi.setStaticRoi(frame);
+                   // static_roi.setStaticRoi(frame);
 
                 }
     }
@@ -128,39 +128,39 @@ void MainWindow::updateGUI(){
 
                     code_timer.startTimer();
                     skin_roi.update();
-                    static_roi.update();
+                   // static_roi.update();
 
                     graphUpdate();
                     skin_roi.increaseIteration();
-                    static_roi.increaseIteration();
+                   // static_roi.increaseIteration();
                     cv::Mat ica_out,weights,ica_out_static, weights_static;
 
                     //only take ica every nth frame to speed up
                     int iteration =  skin_roi.getIteration();
                     int frame_rate = FRAME_SIZE;
-                    qDebug()<<iteration;
+                   // qDebug()<<iteration;
                     if(iteration%frame_rate==0){
                         g_times.push_back(double(time));
                         code_timer.endTimer();
                         skin_roi.setCodeTimer(code_timer.getTime());
                         skin_roi.normaliseRGB();
-                        static_roi.normaliseRGB();
+                       // static_roi.normaliseRGB();
 
-                        //            cv::Mat ica_matrix = skin_roi.createIcaMatrix(
-                        //                        skin_roi.getRedNorm(),skin_roi.getGreenNorm(),skin_roi.getBlueNorm());
-                        //            cv::Mat ica_matrix_static = static_roi.createIcaMatrix(static_roi.getRedNorm(),
-                        //                                                                   static_roi.getGreenNorm(),
-                        //                                                                   static_roi.getBlueNorm());
+//                                    cv::Mat ica_matrix = skin_roi.createIcaMatrix(
+//                                                skin_roi.getRedNorm(),skin_roi.getGreenNorm(),skin_roi.getBlueNorm());
+//                                    cv::Mat ica_matrix_static = static_roi.createIcaMatrix(static_roi.getRedNorm(),
+//                                                                                           static_roi.getGreenNorm(),
+//                                                                                           static_roi.getBlueNorm());
 
-                        //            skin_roi.setIcaMatrix(ica_matrix);
-                        //            static_roi.setIcaMatrix(ica_matrix_static);
+//                                    skin_roi.setIcaMatrix(ica_matrix);
+//                                    static_roi.setIcaMatrix(ica_matrix_static);
 
-                        //            skin_roi.setRemeanMatrix(skin_roi.getIcaMatrix());
-                        //            static_roi.setRemeanMatrix(static_roi.getIcaMatrix());
-                        //            cv::Mat rm;
-                        //            cv::Mat rm_static;
-                        //            rm = skin_roi.getRemeanMatrix();
-                        //            rm_static=static_roi.getRemeanMatrix();
+//                                    skin_roi.setRemeanMatrix(skin_roi.getIcaMatrix());
+//                                    static_roi.setRemeanMatrix(static_roi.getIcaMatrix());
+//                                    cv::Mat rm;
+//                                    cv::Mat rm_static;
+//                                    rm = skin_roi.getRemeanMatrix();
+//                                    rm_static=static_roi.getRemeanMatrix();
 
                         //printMatrix(rm);
                         //whiten fucntion dosent work
@@ -176,34 +176,43 @@ void MainWindow::updateGUI(){
                         // static_roi.setIcaSignal(ica_out_static);
 
                         std::vector<double> greenfft = skin_roi.takeFFT(skin_roi.getGreenNorm());
-                        std::vector<double> greenfft_static = static_roi.takeFFT(static_roi.getGreenNorm());
+                      //  std::vector<double> greenfft_static = static_roi.takeFFT(static_roi.getGreenNorm());
                         skin_roi.findMaxFft(greenfft);
-                        static_roi.findMaxFft(greenfft_static);
-                        double bpm1 = skin_roi.getBpm();
-                        double bpm2 = static_roi.getBpm();
+                      //  static_roi.findMaxFft(greenfft_static);
+                      //  double bpm1 = skin_roi.getBpm();
+                      //  double bpm2 = static_roi.getBpm();
                         ui->lcd_tracked->display(skin_roi.getBpm());
-                        ui->lcd_static->display(static_roi.getBpm());
+                        //ui->lcd_static->display(static_roi.getBpm());
 
 
-                        g_sinwave = skin_roi.generateSinWave(100);
-                        g_fft_test = skin_roi.takeFFT(g_sinwave);
-
-                        QTextStream output(&g_data);
+                      //  g_sinwave = skin_roi.generateSinWave(100);
+                      //  g_fft_test = skin_roi.takeFFT(g_sinwave);
+//
+                      //  QTextStream output(&g_data);
                         QTextStream output2(&g_data2);
 
 
-                        output<<g_video<<","skin_roi.getBpm()<<","<<static_roi.getBpm()<<
-                                ","<<m_cap.get(CV_CAP_PROP_POS_MSEC)<<endl;
+                       // output<<g_video<<","<<skin_roi.getBpm()<<","<<static_roi.getBpm()<<
+                                //","<<m_cap.get(CV_CAP_PROP_POS_MSEC)<<endl;
 
                         std::vector<double> fft_green = skin_roi.getGreenFft();
-                        //std::vector<double> ica_green_signal;
+                        std::vector<double> ica_green_signal,ica_blue_signal,ica_red_signal;
+                        std::vector<double> raw_blue = skin_roi.getBlueVals().toStdVector();
                         std::vector<double> raw_green = skin_roi.getGreenVals().toStdVector();
+                        std::vector<double> raw_red = skin_roi.getRedVals().toStdVector();
+                        std::vector<double> rm_red,rm_green,rm_blue;
+//                        rm.row(0).copyTo(rm_red);
+//                        rm.row(1).copyTo(rm_green);
+//                        rm.row(2).copyTo(rm_blue);
 
-                        std::vector<double> fft_green_static = static_roi.getGreenFft();
+                      //  std::vector<double> fft_green_static = static_roi.getGreenFft();
                         //std::vector<double> ica_green_signal_static;
-                        std::vector<double> raw_green_static = static_roi.getGreenVals().toStdVector();
+                      //  std::vector<double> raw_green_static = static_roi.getGreenVals().toStdVector();
 
-                        //ica_out.row(1).copyTo(ica_green_signal);
+                     //   ica_out.row(1).copyTo(ica_green_signal);
+                    //    ica_out.row(0).copyTo(ica_red_signal);
+                    //    ica_out.row(2).copyTo(ica_blue_signal);
+
 
                         //ica_out_static.row(1).copyTo(ica_green_signal_static);
 
@@ -239,14 +248,15 @@ void MainWindow::updateGUI(){
                         //            output<<maxf<<","<<pos<<","<<time<<","<<maxf2<<","<<pos2<<endl;
                         //            g_time_i++;
 
-                        //            for(int i=0; i<fft_green.size();i++){
-                        //                output2<<raw_green[i]<<","<<","<<fft_green[i]<<","<<time<<","
-                        //                      <<raw_green_static[i]<<","<<","
-                        //                     <<fft_green_static[i]<<endl;
-                        //            }
+//                                    for(int i=0; i<fft_green.size();i++){
+//                                        output2<<time<<","<<raw_blue[i]<<","<<raw_green[i]<<","<<raw_red[i]<<","<<
+//                                              //rm_blue[i]<<","<<rm_green<<","<<rm_blue<<","
+//                                              ica_blue_signal[i]<<","<<ica_green_signal[i]<<","<<ica_red_signal[i]<<
+//                                                                   endl;
+//                                    }
 
 
-                        ui->tick_label->setText("done");
+                      // ui->tick_label->setText("done");
                         //            std::vector<double> fft1,fft2,fft3;
                         //ica_out = ica_out.t();
                         //           ica_out.row(0).copyTo(fft1);
@@ -263,11 +273,11 @@ void MainWindow::updateGUI(){
                 }
 
                 ui->webcam_label->setPixmap(convertOpenCVMatToQtQPixmap(frame));
-                ui->skinLabel->setPixmap(convertOpenCVMatToQtQPixmap2(skin_roi.getGreenRoi()));
+             //   ui->skinLabel->setPixmap(convertOpenCVMatToQtQPixmap2(skin_roi.getGreenRoi()));
             }
         }
         else{
-
+            g_video++;
             m_cap.release();
             string filename="C:/a/";
             filename+= std::to_string(g_video);
@@ -276,7 +286,7 @@ void MainWindow::updateGUI(){
             m_cap = cv::VideoCapture(filename);
             g_frame_count=m_cap.get(CV_CAP_PROP_FRAME_COUNT );
             g_current_frame = m_cap.get(CV_CAP_PROP_POS_FRAMES);
-            g_video++;
+
 
         }
     }
@@ -440,11 +450,9 @@ void MainWindow::on_saveDataButton_clicked()
                 "ica out row0, row1, row2,fft green,period,max freq"<<endl;
         for(size_t i=0; i<vector_red.size();i++ ){
             output << i<<","<<vector_red[i]<<","<<vector_green[i]<<","<<vector_blue[i]<<","
-                   << norm_red[i]<<","<< skin_roi.getGreenNorm()[i]<<","<<skin_roi.getBlueNorm()[i]
-                      <<","<<matr1[i]<<","
-                     <<matr2[i]<<","<<matr3[i]<<","
-                    <<icaout1[i]<<","<<icaout2[i]<<","<<icaout3[i]<<","<<greenfft[i]
-                      <<","<<skin_roi.getCodeTimer()<<","<<maxfreq<<endl;
+
+
+                    <<icaout1[i]<<","<<icaout2[i]<<","<<icaout3[i]<<","<<endl;
             //","<<g_sinwave[i]<<","<<g_fft_test[i]<<endl;
         }
     }
@@ -486,4 +494,11 @@ void MainWindow::on_playButton_clicked()
     else if (g_play_flag==1){
         g_play_flag=0;
     }
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+
+    g_data2.close();
+
 }
