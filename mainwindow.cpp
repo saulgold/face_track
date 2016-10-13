@@ -98,7 +98,7 @@ void MainWindow::updateGUI(){
                 g_frame_count=m_cap.get(CV_CAP_PROP_FRAME_COUNT );
                 g_current_frame = m_cap.get(CV_CAP_PROP_POS_FRAMES);
                 int time = m_cap.get(CV_CAP_PROP_POS_MSEC);
-                ui->lcd_time->display(time);
+                //ui->lcd_time->display(time);
                 int fps = m_cap.get(CV_CAP_PROP_FPS);
                 g_tick_frequency = cv::getTickFrequency();
                 //ui->tick_freq_lcd->display(g_tick_frequency);
